@@ -1,0 +1,6 @@
+name = "cf-domain-show"
+compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "DOMAINS_KV"
+id = "37453b35b0b043ac96abf635079e23cd"
