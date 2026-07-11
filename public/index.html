@@ -1,6 +1,84 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>域名展示</title><style>body{font-family:sans-serif;max-width:900px;margin:auto;padding:20px}.card{border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px}.up{color:green}.down{color:red}</style></head><body><h1>域名状态</h1><div id='list'></div><script>
-fetch('/api/config').then(r=>r.json()).then(data=>{
-const el=document.getElementById('list');
-data.forEach(d=>el.innerHTML+=`<div class='card'><h3>${d.domain}</h3><p class='${d.status}'>${d.status}</p></div>`)
-})
-</script></body></html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>域名状态监控</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen">
+
+    <div class="max-w-5xl mx-auto px-4 py-12">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight mb-2">🌐 域名资产状态</h1>
+            <p class="text-slate-500">实时展示旗下域名的当前运行及托管状态</p>
+        </header>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8" id="stats">
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-100 text-center">
+                <div class="text-xs text-slate-400 font-medium uppercase">总域名数</div>
+                <div class="text-2xl font-bold mt-1 text-slate-700" id="stat-total">-</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-100 text-center">
+                <div class="text-xs text-green-500 font-medium uppercase">正常运行</div>
+                <div class="text-2xl font-bold mt-1 text-green-600" id="stat-up">-</div>
+            </div>
+            <div class="bg-white p-4 rounded-xl shadow-xs border border-slate-100 text-center col-span-2 sm:col-span-1">
+                <div class="text-xs text-red-500 font-medium uppercase">异常离线</div>
+                <div class="text-2xl font-bold mt-1 text-red-600" id="stat-down">-</div>
+            </div>
+        </div>
+
+        <div id="list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="animate-pulse bg-white p-6 rounded-xl border border-slate-100 h-28"></div>
+            <div class="animate-pulse bg-white p-6 rounded-xl border border-slate-100 h-28"></div>
+        </div>
+    </div>
+
+    <script>
+        fetch('/api/config')
+        .then(r => r.json())
+        .then(data => {
+            const el = document.getElementById('list');
+            el.innerHTML = '';
+            
+            if(data.length === 0) {
+                el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400">暂无域名数据</div>`;
+                return;
+            }
+
+            let upCount = 0;
+            data.forEach(d => {
+                const isUp = d.status === 'up';
+                if(isUp) upCount++;
+                
+                // 动态卡片生成
+                el.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-xs border border-slate-100 hover:shadow-md transition-shadow duration-200 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 tracking-tight">${d.domain}</h3>
+                            <p class="text-sm text-slate-400 mt-1">${d.memo || '无备注'}</p>
+                        </div>
+                        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-1.5 rounded-full border border-slate-100">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full ${isUp ? 'bg-green-400' : 'bg-red-400'} opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 ${isUp ? 'bg-green-500' : 'bg-red-500'}"></span>
+                            </span>
+                            <span class="text-xs font-bold uppercase tracking-wider ${isUp ? 'text-green-600' : 'text-red-600'}">
+                                ${isUp ? 'ONLINE' : 'OFFLINE'}
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // 更新统计数据
+            document.getElementById('stat-total').innerText = data.length;
+            document.getElementById('stat-up').innerText = upCount;
+            document.getElementById('stat-down').innerText = data.length - upCount;
+        }).catch(err => {
+            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-red-500">加载失败，请检查 API 配置</div>`;
+        });
+    </script>
+</body>
+</html>
