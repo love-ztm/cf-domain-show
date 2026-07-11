@@ -1,11 +1,13 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>后台</title></head><body>
-<h2>管理后台</h2>
-<input id='pwd' type='password' placeholder='密码'><br><br>
-<textarea id='data' style='width:100%;height:300px;'>[{"domain":"example.com","status":"up"}]</textarea><br>
-<button onclick='save()'>保存</button>
+<!DOCTYPE html><html><head><meta charset='UTF-8'><title>后台管理</title>
+<style>body{font-family:Arial;max-width:1100px;margin:20px auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ddd;padding:8px}input,select,textarea{padding:6px}button{margin:4px;padding:6px 12px}</style></head><body>
+<h2>域名管理后台</h2>
+密码:<input id='pwd' type='password'><button onclick='load()'>读取</button><button onclick='addRow()'>新增</button><button onclick='save()'>保存</button>
+<table><thead><tr><th>域名</th><th>状态</th><th>操作</th></tr></thead><tbody id='tb'></tbody></table>
+<h3>JSON</h3><textarea id='data' style='width:100%;height:180px'></textarea>
 <script>
-async function save(){
-const res=await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+pwd.value},body:data.value});
-alert(await res.text())
-}
+async function load(){let r=await fetch('/api/config');let j=await r.json();if(!Array.isArray(j))j=[];render(j);}
+function render(arr){tb.innerHTML='';data.value=JSON.stringify(arr,null,2);arr.forEach((x,i)=>{let tr=document.createElement('tr');tr.innerHTML=`<td><input value="${x.domain||''}"></td><td><select><option value=up ${x.status=='up'?'selected':''}>up</option><option value=down ${x.status=='down'?'selected':''}>down</option></select></td><td><button onclick="this.parentNode.parentNode.remove()">删除</button></td>`;tb.appendChild(tr);});}
+function addRow(){let tr=document.createElement('tr');tr.innerHTML='<td><input></td><td><select><option>up</option><option>down</option></select></td><td><button onclick="this.parentNode.parentNode.remove()">删除</button></td>';tb.appendChild(tr);}
+async function save(){let arr=[];tb.querySelectorAll('tr').forEach(tr=>{let i=tr.querySelectorAll('input,select');arr.push({domain:i[0].value,status:i[1].value})});data.value=JSON.stringify(arr,null,2);let r=await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+pwd.value},body:data.value});alert(await r.text());load();}
+load();
 </script></body></html>
