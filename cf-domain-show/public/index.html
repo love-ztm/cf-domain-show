@@ -1,6 +1,0 @@
-<!DOCTYPE html><html><head><meta charset='UTF-8'><title>域名展示</title><style>body{font-family:sans-serif;max-width:900px;margin:auto;padding:20px}.card{border:1px solid #ddd;padding:15px;margin:10px 0;border-radius:8px}.up{color:green}.down{color:red}</style></head><body><h1>域名状态</h1><div id='list'></div><script>
-fetch('/api/config').then(r=>r.json()).then(data=>{
-const el=document.getElementById('list');
-data.forEach(d=>el.innerHTML+=`<div class='card'><h3>${d.domain}</h3><p class='${d.status}'>${d.status}</p></div>`)
-})
-</script></body></html>
