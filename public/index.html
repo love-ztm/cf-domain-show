@@ -9,7 +9,7 @@
         .dark body { background-color: #030712; }
         .light body { background-color: #f8fafc; }
 
-        /* 全屏全景覆盖的动态背景图层 */
+        /* 全屏覆盖的动态背景图层 */
         .bg-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -20,20 +20,17 @@
             transition: background-image 0.5s ease-in-out;
         }
         
-        /* 【核心调整】全局背景遮罩降到极低透明度，让你的背景图完美呈现，绝不遮挡严实。
-           暗色提供一层极淡的黑晕，亮色提供一层极淡的白晕。
-        */
+        /* 保持极高透明度，让自定义背景完美呈现 */
         .dark .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
             background: rgba(3, 7, 18, 0.35); 
         }
         .light .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        /* 【高级磨砂核心】控制台顶部面板 
-        */
+        /* 顶部面板磨砂玻璃 */
         .dark .glass-panel {
             background: rgba(15, 23, 42, 0.65);
             backdrop-filter: blur(24px);
@@ -45,12 +42,10 @@
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(15, 23, 42, 0.12);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
         }
 
-        /* 【高级磨砂核心】域名资产卡片：
-           利用高强度毛玻璃滤镜 blur(20px)，即使背景图很亮很杂，也能在卡片内部强行“雾化”，保护字体可读性。
-        */
+        /* 卡片高强度磨砂雾化 */
         .dark .glass-card {
             background: rgba(17, 24, 39, 0.6); 
             backdrop-filter: blur(20px);
@@ -65,18 +60,18 @@
         }
 
         .light .glass-card {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.06);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.04);
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.03);
         }
         .light .glass-card:hover {
             background: rgba(255, 255, 255, 0.85);
             border-color: rgba(59, 130, 246, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px 0 rgba(59, 130, 246, 0.12);
+            box-shadow: 0 8px 24px 0 rgba(59, 130, 246, 0.1);
         }
     </style>
 </head>
@@ -87,7 +82,7 @@
     <div class="max-w-6xl mx-auto px-4 py-12">
         
         <div class="flex justify-end mb-4">
-            <button onclick="toggleTheme()" class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/60 dark:border-slate-700/60 light:border-slate-300/80 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/90 backdrop-blur-md text-xs font-bold tracking-wide shadow-md transition-all hover:scale-105">
+            <button onclick="toggleTheme()" class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-700/60 dark:border-slate-700/60 light:border-slate-300 bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/90 backdrop-blur-md text-xs font-bold tracking-wide shadow-md transition-all hover:scale-105">
                 <span id="theme-icon">🌙</span> 
                 <span id="theme-text" class="text-white dark:text-white light:text-slate-800">暗黑模式</span>
             </button>
@@ -105,7 +100,7 @@
                 </h1>
                 <p class="text-slate-300 dark:text-slate-300 light:text-slate-600 text-sm">多模态自适应资产可视化控制台</p>
                 
-                <div class="flex items-center gap-2 text-xs font-mono text-slate-200 dark:text-slate-200 light:text-slate-700 bg-slate-950/70 dark:bg-slate-950/70 light:bg-white/80 px-3 py-1.5 rounded-lg border border-slate-800/60 dark:border-slate-800/60 light:border-slate-300/80 w-fit mt-3 shadow-xs">
+                <div class="flex items-center gap-2 text-xs font-mono text-slate-200 dark:text-slate-200 light:text-slate-700 bg-slate-950/70 dark:bg-slate-950/70 light:bg-white/80 px-3 py-1.5 rounded-lg border border-slate-800/60 dark:border-slate-800/60 light:border-slate-300 w-fit mt-3 shadow-xs">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
                     <span>系统已安全运行:</span>
                     <span id="runtime-display" class="text-blue-400 dark:text-blue-400 light:text-blue-600 font-bold">0天 00时 00分 00秒</span>
@@ -135,6 +130,7 @@
     </div>
 
     <script>
+        let cachedDomains = [];
         let cachedBgDark = '';
         let cachedBgLight = '';
 
@@ -155,6 +151,9 @@
                 txt.innerText = '暗黑模式';
                 applyBackgroundImage(cachedBgDark);
             }
+            
+            // 关键：切换模式后重新渲染列表，以便字体颜色动态调整
+            renderList(cachedDomains);
         }
 
         function applyBackgroundImage(url) {
@@ -164,6 +163,58 @@
             } else {
                 bgEl.style.backgroundImage = 'none';
             }
+        }
+
+        // --- 核心渲染函数：根据明暗模式动态注入对应文字色彩 ---
+        function renderList(domainList) {
+            const el = document.getElementById('list');
+            el.innerHTML = '';
+            
+            if(!domainList || domainList.length === 0) {
+                el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">暂无任何资产数据</div>`;
+                return;
+            }
+
+            const isCurrentDark = document.body.classList.contains('dark');
+            
+            // 智能计算并分配黑白对比度类名
+            const titleColorClass = isCurrentDark ? 'text-white' : 'text-slate-900';
+            const memoColorClass = isCurrentDark ? 'text-slate-300' : 'text-slate-600';
+            const priceBgClass = isCurrentDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-800';
+
+            let upCount = 0;
+            domainList.forEach(d => {
+                const isUp = d.status === 'up';
+                if(isUp) upCount++;
+                
+                // 状态标签色彩样式
+                const statusBadgeClass = isUp 
+                    ? (isCurrentDark ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700')
+                    : (isCurrentDark ? 'bg-rose-500/15 border-rose-500/30 text-rose-400' : 'bg-rose-50 border-rose-200 text-rose-700');
+
+                el.innerHTML += `
+                    <div class="glass-card p-4 rounded-xl flex items-center justify-between relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-500' : 'bg-gradient-to-b from-rose-400 to-rose-500'}"></div>
+                        
+                        <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
+                            <h3 class="text-xl font-black ${titleColorClass} tracking-tight group-hover:text-blue-500 transition-colors font-mono truncate">${d.domain}</h3>
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="${memoColorClass} font-bold truncate">${d.memo || '暂无备注'}</span>
+                                ${d.price ? `<span class="inline-flex items-center font-mono font-bold px-1.5 py-0.5 rounded text-[10px] border ${priceBgClass}">￥${d.price}</span>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center space-x-1.5 px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0 ${statusBadgeClass}">
+                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e]'}"></span>
+                            <span class="text-[11px] tracking-wider">${isUp ? '正常' : '异常'}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('stat-total').innerText = domainList.length;
+            document.getElementById('stat-up').innerText = upCount;
+            document.getElementById('stat-down').innerText = domainList.length - upCount;
         }
 
         // --- 运行时间计算 ---
@@ -181,61 +232,23 @@
         setInterval(updateRuntime, 1000);
         updateRuntime();
 
-        // --- 数据请求与渲染 ---
+        // --- 数据请求初始化 ---
         fetch('/api/config')
         .then(r => r.json())
         .then(resData => {
-            let domainList = [];
-            
             if (Array.isArray(resData)) {
-                domainList = resData;
+                cachedDomains = resData;
             } else if (resData && typeof resData === 'object') {
-                domainList = resData.domains || [];
+                cachedDomains = resData.domains || [];
                 cachedBgDark = resData.backgroundImageDark || resData.backgroundImage || '';
                 cachedBgLight = resData.backgroundImageLight || '';
             }
 
+            // 初始化加载正确的背景图并渲染
             applyBackgroundImage(document.body.classList.contains('dark') ? cachedBgDark : cachedBgLight);
-
-            const el = document.getElementById('list');
-            el.innerHTML = '';
-            
-            if(domainList.length === 0) {
-                el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">暂无任何资产数据</div>`;
-                return;
-            }
-
-            let upCount = 0;
-            domainList.forEach(d => {
-                const isUp = d.status === 'up';
-                if(isUp) upCount++;
-                
-                // 【核心修复】这里的 text-slate-800 dark:text-white light:text-slate-900 保证文字在各种复杂颜色背景下都极度突出清晰
-                el.innerHTML += `
-                    <div class="glass-card p-4 rounded-xl flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-500' : 'bg-gradient-to-b from-rose-400 to-rose-500'}"></div>
-                        
-                        <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
-                            <h3 class="text-xl font-black text-white dark:text-white light:text-slate-900 tracking-tight group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors font-mono truncate">${d.domain}</h3>
-                            <div class="flex items-center gap-2 text-xs">
-                                <span class="text-slate-300 dark:text-slate-300 light:text-slate-600 font-semibold truncate">${d.memo || '暂无备注'}</span>
-                                ${d.price ? `<span class="inline-flex items-center text-amber-400 dark:text-amber-400 light:text-amber-700 font-mono font-bold bg-amber-500/10 dark:bg-amber-500/10 light:bg-amber-500/20 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px]">￥${d.price}</span>` : ''}
-                            </div>
-                        </div>
-
-                        <div class="flex items-center space-x-1.5 ${isUp ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 light:text-emerald-700 light:bg-emerald-50 light:border-emerald-200' : 'bg-rose-500/15 border-rose-500/30 text-rose-400 light:text-rose-700 light:bg-rose-50 light:border-rose-200'} px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0">
-                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e]'}"></span>
-                            <span class="text-[11px] tracking-wider">${isUp ? '正常' : '异常'}</span>
-                        </div>
-                    </div>
-                `;
-            });
-
-            document.getElementById('stat-total').innerText = domainList.length;
-            document.getElementById('stat-up').innerText = upCount;
-            document.getElementById('stat-down').innerText = domainList.length - upCount;
+            renderList(cachedDomains);
         }).catch(err => {
-            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-400 text-sm font-medium border border-rose-950/40 bg-rose-950/20 rounded-xl">❌ 数据同步失败，请检查 API 状态<br><span class="text-xs text-slate-500 font-mono mt-1 inline-block">${err.message}</span></div>`;
+            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-500 text-sm font-medium border border-rose-950/40 bg-rose-950/20 rounded-xl">❌ 数据同步失败，请检查 API 状态<br><span class="text-xs text-slate-500 font-mono mt-1 inline-block">${err.message}</span></div>`;
         });
     </script>
 </body>
