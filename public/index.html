@@ -6,286 +6,129 @@
     <title>域名展示</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* ===== 核心背景：深空科技蓝 ===== */
+        /* 核心科技感样式定制 */
         body {
-            background-color: #0b1121;
-            color: #e2e8f0;
-            overflow-x: hidden;
+            background-color: #030712;
+            /* 增加科技感背景元素：融合深海蓝黑渐变、科幻光晕与轻量数字矩阵点阵 */
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 45%),
+                radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 45%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.03) 0px, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 30px 30px, 30px 30px;
         }
 
-        /* 动态网格背景 */
-        .grid-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-image:
-                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-            -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
-            pointer-events: none;
+        /* 赛博朋克霓虹边框呼吸灯 */
+        .cyber-glow {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2), 0 0 15px -5px rgba(147, 51, 234, 0.15);
         }
 
-        /* 浮动光球 */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
-            animation: floatOrb 20s ease-in-out infinite alternate;
-        }
-        .orb-1 { width: 500px; height: 500px; background: #0ea5e9; top: -10%; left: -10%; animation-delay: 0s; }
-        .orb-2 { width: 400px; height: 400px; background: #8b5cf6; bottom: -5%; right: -5%; animation-delay: -5s; }
-        .orb-3 { width: 300px; height: 300px; background: #06b6d4; top: 40%; left: 60%; animation-delay: -10s; }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, -30px) scale(1.1); }
-        }
-
-        /* 扫描线 */
-        .scanline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.3), transparent);
-            animation: scan 8s linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        @keyframes scan {
-            0% { top: -2px; }
-            100% { top: 100vh; }
-        }
-
-        /* ===== 玻璃拟态卡片 ===== */
-        .glass-card {
+        /* 大气的磨砂玻璃拟态面板 */
+        .glass-panel {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(56, 189, 248, 0.08);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* 资产列表卡片：悬停高光与3D微上浮 */
+        .glass-card {
+            background: rgba(31, 41, 55, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .glass-card:hover {
-            border-color: rgba(56, 189, 248, 0.2);
-            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            transform: translateY(-2px);
-        }
-
-        /* 状态指示器发光 */
-        .status-dot {
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        /* 域名文字发光效果 */
-        .domain-text {
-            text-shadow: 0 0 20px rgba(56, 189, 248, 0.1);
-        }
-        .domain-card:hover .domain-text {
-            text-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
-            color: #38bdf8;
-        }
-
-        /* 价格标签 */
-        .price-tag {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
-            border: 1px solid rgba(245, 158, 11, 0.15);
-        }
-
-        /* 统计卡片渐变 */
-        .stat-card {
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        }
-        .stat-up { background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02)); border-color: rgba(16, 185, 129, 0.12); }
-        .stat-down { background: linear-gradient(135deg, rgba(244, 63, 94, 0.08), rgba(244, 63, 94, 0.02)); border-color: rgba(244, 63, 94, 0.12); }
-        .stat-total { background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(56, 189, 248, 0.02)); border-color: rgba(56, 189, 248, 0.12); }
-
-        /* 加载动画 */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.6) 50%, rgba(30, 41, 59, 0.6) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* 滚动条美化 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        /* 角标装饰 */
-        .corner-deco {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border: 1px solid rgba(56, 189, 248, 0.3);
-            transition: all 0.3s ease;
-        }
-        .corner-tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
-        .corner-tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
-        .corner-bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
-        .corner-br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
-        .glass-card:hover .corner-deco {
-            width: 12px;
-            height: 12px;
-            border-color: rgba(56, 189, 248, 0.5);
+            background: rgba(31, 41, 55, 0.6);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 10px 25px -10px rgba(59, 130, 246, 0.3);
         }
     </style>
-<base target="_blank">
 </head>
-<body class="antialiased min-h-screen relative">
+<body class="text-slate-200 antialiased min-h-screen">
 
-    <!-- 背景层 -->
-    <div class="grid-bg"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="scanline"></div>
-
-    <!-- 主内容 -->
-    <div class="relative z-10 max-w-6xl mx-auto px-4 py-10">
-
-        <!-- Header -->
-        <header class="text-center mb-12">
-            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-widest mb-4 border"
-                 style="background: rgba(14, 165, 233, 0.08); border-color: rgba(14, 165, 233, 0.15); color: #38bdf8;">
-                <span class="relative flex h-1.5 w-1.5">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-sky-400"></span>
-                </span>
-                ASSETS INTERFACE v2.0
+    <div class="max-w-6xl mx-auto px-4 py-10">
+        <header class="text-center mb-10 relative">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-20 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/50 text-blue-400 rounded-full text-xs font-semibold mb-3 tracking-wide border border-blue-500/30">
+                🌐 ASSETS INTERFACE
             </div>
-            <h1 class="text-4xl font-black text-white tracking-tight mb-2" style="text-shadow: 0 0 40px rgba(56, 189, 248, 0.15);">
-                域名展示
-            </h1>
-            <p class="text-slate-400 text-sm tracking-wide">高效、直观地集中管理域名数据</p>
+            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight mb-1.5">域名展示</h1>
+            <p class="text-slate-400 text-sm">高效、直观地集中管理域名数据</p>
         </header>
 
-        <!-- 统计卡片 -->
-        <div class="grid grid-cols-3 gap-4 max-w-3xl mx-auto mb-10" id="stats">
-            <div class="glass-card stat-total stat-card p-4 rounded-xl text-center relative">
-                <div class="text-[11px] text-sky-400/70 font-bold uppercase tracking-widest">总域名数</div>
-                <div class="text-2xl font-black mt-1 text-white" id="stat-total">-</div>
-                <div class="absolute bottom-2 right-3 text-[10px] text-slate-600 font-mono opacity-50">TOTAL</div>
+        <div class="grid grid-cols-3 gap-3 max-w-3xl mx-auto mb-8" id="stats">
+            <div class="glass-panel p-3 rounded-xl shadow-xs text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+                <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">总域名数</div>
+                <div class="text-xl font-mono font-black mt-0.5 text-white" id="stat-total">-</div>
             </div>
-            <div class="glass-card stat-up stat-card p-4 rounded-xl text-center relative">
-                <div class="text-[11px] text-emerald-400/70 font-bold uppercase tracking-widest">正常 / 启用</div>
-                <div class="text-2xl font-black mt-1 text-emerald-400" id="stat-up">-</div>
-                <div class="absolute bottom-2 right-3 text-[10px] text-slate-600 font-mono opacity-50">ACTIVE</div>
+            <div class="glass-panel p-3 rounded-xl shadow-xs text-center border-emerald-500/20 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
+                <div class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">正常 / 启用</div>
+                <div class="text-xl font-mono font-black mt-0.5 text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]" id="stat-up">-</div>
             </div>
-            <div class="glass-card stat-down stat-card p-4 rounded-xl text-center relative">
-                <div class="text-[11px] text-rose-400/70 font-bold uppercase tracking-widest">异常 / 停用</div>
-                <div class="text-2xl font-black mt-1 text-rose-400" id="stat-down">-</div>
-                <div class="absolute bottom-2 right-3 text-[10px] text-slate-600 font-mono opacity-50">INACTIVE</div>
+            <div class="glass-panel p-3 rounded-xl shadow-xs text-center border-rose-500/20 relative overflow-hidden">
+                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent"></div>
+                <div class="text-[11px] text-rose-400 font-bold uppercase tracking-wider">异常 / 停用</div>
+                <div class="text-xl font-mono font-black mt-0.5 text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.2)]" id="stat-down">-</div>
             </div>
         </div>
 
-        <!-- 域名列表 -->
-        <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div class="skeleton glass-card p-5 rounded-xl h-24"></div>
-            <div class="skeleton glass-card p-5 rounded-xl h-24"></div>
-            <div class="skeleton glass-card p-5 rounded-xl h-24"></div>
+        <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div class="animate-pulse bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 h-20"></div>
+            <div class="animate-pulse bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 h-20"></div>
+            <div class="animate-pulse bg-slate-900/40 p-4 rounded-xl border border-slate-800/60 h-20"></div>
         </div>
     </div>
 
     <script>
+        // 严格回归原版路径
         fetch('/api/config')
         .then(r => r.json())
         .then(data => {
             const el = document.getElementById('list');
             el.innerHTML = '';
-
+            
             if(data.length === 0) {
-                el.innerHTML = `
-                    <div class="col-span-full text-center py-16">
-                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.1);">
-                            <svg class="w-8 h-8 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        </div>
-                        <p class="text-slate-500 text-sm">暂无任何域名资产数据</p>
-                    </div>`;
+                el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500 text-sm">暂无任何域名资产数据</div>`;
                 return;
             }
 
             let upCount = 0;
-            data.forEach((d, i) => {
+            data.forEach(d => {
+                // 严格回归原版状态检测 ('up')
                 const isUp = d.status === 'up';
                 if(isUp) upCount++;
-
-                const delay = i * 50;
-
+                
                 el.innerHTML += `
-                    <div class="glass-card domain-card p-5 rounded-xl flex items-center justify-between relative overflow-hidden group cursor-default"
-                         style="animation: fadeInUp 0.5s ease ${delay}ms both;">
-
-                        <!-- 角标装饰 -->
-                        <div class="corner-deco corner-tl"></div>
-                        <div class="corner-deco corner-tr"></div>
-                        <div class="corner-deco corner-bl"></div>
-                        <div class="corner-deco corner-br"></div>
-
-                        <!-- 左侧状态条 -->
-                        <div class="absolute left-0 top-0 bottom-0 w-[3px] ${isUp ? 'bg-emerald-500' : 'bg-rose-500'}"
-                             style="box-shadow: ${isUp ? '0 0 12px rgba(16,185,129,0.4)' : '0 0 12px rgba(244,63,94,0.4)'};"></div>
-
-                        <div class="pl-3 flex flex-col gap-1 min-w-0">
-                            <h3 class="text-lg font-black text-slate-100 tracking-tight domain-text transition-all duration-300 font-mono truncate">${d.domain}</h3>
-                            <div class="flex items-center gap-2.5 text-xs flex-wrap">
-                                <span class="text-slate-500 font-medium truncate max-w-[140px]">${d.memo || '暂无备注'}</span>
-                                ${d.price ? `<span class="price-tag inline-flex items-center text-amber-400 font-bold px-2 py-0.5 rounded text-[10px]">¥ ${d.price}</span>` : ''}
+                    <div class="glass-card backdrop-blur-md p-4 rounded-xl shadow-xs hover:to-indigo-950/20 transition-all duration-200 flex items-center justify-between relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-600' : 'bg-gradient-to-b from-rose-400 to-rose-600'}"></div>
+                        
+                        <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
+                            <h3 class="text-xl font-black text-white tracking-tight group-hover:text-blue-400 transition-colors font-mono truncate">${d.domain}</h3>
+                            <div class="flex items-center gap-2 text-xs">
+                                <span class="text-slate-400 font-medium truncate">${d.memo || '暂无备注'}</span>
+                                ${d.price ? `<span class="inline-flex items-center text-amber-400 font-mono font-bold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px]">￥${d.price}</span>` : ''}
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-2 ${isUp ? 'text-emerald-400' : 'text-rose-400'} px-3 py-1.5 rounded-lg text-xs font-bold shrink-0 ml-3"
-                             style="background: ${isUp ? 'rgba(16,185,129,0.08)' : 'rgba(244,63,94,0.08)'}; border: 1px solid ${isUp ? 'rgba(16,185,129,0.12)' : 'rgba(244,63,94,0.12)'};">
-                            <span class="h-2 w-2 rounded-full ${isUp ? 'bg-emerald-400 status-dot' : 'bg-rose-400 status-dot'}"></span>
+                        <div class="flex items-center space-x-1.5 ${isUp ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'} px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0">
+                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e]'}"></span>
                             <span class="text-[11px] tracking-wider">${isUp ? '正常' : '异常'}</span>
                         </div>
                     </div>
                 `;
             });
 
-            // 添加进入动画
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(12px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-            `;
-            document.head.appendChild(style);
-
             document.getElementById('stat-total').innerText = data.length;
             document.getElementById('stat-up').innerText = upCount;
             document.getElementById('stat-down').innerText = data.length - upCount;
         }).catch(err => {
-            document.getElementById('list').innerHTML = `
-                <div class="col-span-full text-center py-16">
-                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.15);">
-                        <svg class="w-8 h-8 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    </div>
-                    <p class="text-rose-400/80 text-sm font-medium">加载失败，请检查 Cloudflare KV 绑定或 API 配置</p>
-                    <p class="text-slate-600 text-xs mt-1">${err.message || '网络请求异常'}</p>
-                </div>`;
+            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-400 text-sm font-medium border border-rose-950/40 bg-rose-950/10 rounded-xl">❌ 加载失败，请检查 Cloudflare KV 绑定或 API 配置<br><span class="text-xs text-slate-500 font-mono mt-1 inline-block">${err.message}</span></div>`;
         });
     </script>
 </body>
