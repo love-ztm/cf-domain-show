@@ -91,23 +91,29 @@
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12 pb-8 border-b border-slate-800/40 dark:border-slate-800/40 light:border-slate-300/60 relative">
             <div class="absolute -bottom-[1px] left-0 w-32 h-[1px] bg-blue-500"></div>
             
-            <div class="relative z-10 space-y-2">
+            <div class="relative z-10 space-y-2 flex-1">
                 <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/60 dark:bg-blue-950/60 light:bg-blue-50 text-blue-400 dark:text-blue-400 light:text-blue-600 rounded-full text-xs font-semibold tracking-wide border border-blue-500/30">
                     🌐 ASSETS CONTROL
                 </div>
                 <h1 class="text-4xl font-black text-white dark:text-white light:text-slate-900 tracking-tight">
-                    在售域名展示
+                    域名展示
                 </h1>
-                <p class="text-slate-300 dark:text-slate-300 light:text-slate-600 text-sm">多模态自适应域名可视化展示台</p>
+                <p class="text-slate-300 dark:text-slate-300 light:text-slate-600 text-sm">多模态自适应资产可视化控制台</p>
                 
-                <div class="flex items-center gap-2 text-xs font-mono text-slate-200 dark:text-slate-200 light:text-slate-700 bg-slate-950/70 dark:bg-slate-950/70 light:bg-white/80 px-3 py-1.5 rounded-lg border border-slate-800/60 dark:border-slate-800/60 light:border-slate-300 w-fit mt-3 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
-                    <span>本系统已安全运行:</span>
-                    <span id="runtime-display" class="text-blue-400 dark:text-blue-400 light:text-blue-600 font-bold">0天 00时 00分 00秒</span>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-3 w-full">
+                    <div class="flex items-center gap-2 text-xs font-mono text-slate-200 dark:text-slate-200 light:text-slate-700 bg-slate-950/70 dark:bg-slate-950/70 light:bg-white/80 px-3 py-1.5 rounded-lg border border-slate-800/60 dark:border-slate-800/60 light:border-slate-300 w-fit shadow-xs shrink-0">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                        <span>系统已安全运行:</span>
+                        <span id="runtime-display" class="text-blue-400 dark:text-blue-400 light:text-blue-600 font-bold">0天 00时 00分 00秒</span>
+                    </div>
+                    
+                    <div class="text-xs text-slate-300 dark:text-slate-300 light:text-slate-600 italic bg-slate-950/40 dark:bg-slate-950/40 light:bg-slate-100/60 px-3 py-1.5 rounded-lg border border-slate-800/40 dark:border-slate-800/40 light:border-slate-200 max-w-xl truncate" id="hitokoto-display">
+                        ✍️ 正在加载每日一言...
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-3 min-w-[320px] md:min-w-[420px]">
+            <div class="grid grid-cols-3 gap-3 min-w-[320px] md:min-w-[420px] shrink-0 self-end md:self-auto">
                 <div class="glass-panel p-3.5 rounded-xl text-center relative overflow-hidden">
                     <div class="text-[11px] text-slate-300 dark:text-slate-300 light:text-slate-500 font-bold uppercase tracking-wider">总域名数</div>
                     <div class="text-2xl font-mono font-black mt-0.5 text-white dark:text-white light:text-slate-900" id="stat-total">-</div>
@@ -189,7 +195,6 @@
                     ? (isCurrentDark ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700')
                     : (isCurrentDark ? 'bg-rose-500/15 border-rose-500/30 text-rose-400' : 'bg-rose-50 border-rose-200 text-rose-700');
 
-                // 【布局重构】右侧包裹一个容器，将放大后的金额（text-sm）无缝排在状态标签（正常/异常）的前面
                 el.innerHTML += `
                     <div class="glass-card p-4 rounded-xl flex items-center justify-between relative overflow-hidden group">
                         <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-500' : 'bg-gradient-to-b from-rose-400 to-rose-500'}"></div>
@@ -220,7 +225,7 @@
         }
 
         // --- 运行时间计算 ---
-        const startDate = new Date("2026/06/01 00:00:00"); 
+        const startDate = new Date("2025/01/01 00:00:00"); 
         function updateRuntime() {
             const now = new Date();
             const diff = now - startDate;
@@ -233,6 +238,18 @@
         }
         setInterval(updateRuntime, 1000);
         updateRuntime();
+
+        // --- 异步获取每日一言 (Hitokoto API) ---
+        fetch('https://v1.hitokoto.cn')
+        .then(response => response.json())
+        .then(data => {
+            const displayEl = document.getElementById('hitokoto-display');
+            displayEl.innerText = `“ ${data.hitokoto} ” —— 《${data.from}》`;
+            displayEl.title = `作者/来源: ${data.from_who || '未知'}`;
+        })
+        .catch(() => {
+            document.getElementById('hitokoto-display').innerText = `“ 追求卓越，成功就会在不经意间追上你。 ”`;
+        });
 
         // --- 数据请求初始化 ---
         fetch('/api/config')
