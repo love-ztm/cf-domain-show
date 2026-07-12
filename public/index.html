@@ -6,10 +6,9 @@
     <title>域名展示</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* 核心科技感样式定制 */
         body {
             background-color: #030712;
-            /* 增加科技感背景元素：融合深海蓝黑渐变、科幻光晕与轻量数字矩阵点阵 */
+            /* 科技感背景：融合深海蓝黑渐变与微量数字矩阵点阵 */
             background-image: 
                 radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 45%),
                 radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 45%),
@@ -19,12 +18,10 @@
             background-size: 100% 100%, 100% 100%, 100% 100%, 30px 30px, 30px 30px;
         }
 
-        /* 赛博朋克霓虹边框呼吸灯 */
         .cyber-glow {
             box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2), 0 0 15px -5px rgba(147, 51, 234, 0.15);
         }
 
-        /* 大气的磨砂玻璃拟态面板 */
         .glass-panel {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(16px);
@@ -32,7 +29,6 @@
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
-        /* 资产列表卡片：悬停高光与3D微上浮 */
         .glass-card {
             background: rgba(31, 41, 55, 0.3);
             backdrop-filter: blur(8px);
@@ -49,32 +45,43 @@
 </head>
 <body class="text-slate-200 antialiased min-h-screen">
 
-    <div class="max-w-6xl mx-auto px-4 py-10">
-        <header class="text-center mb-10 relative">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-20 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12 pb-8 border-b border-slate-800/60 relative">
+            <div class="absolute -bottom-[1px] left-0 w-32 h-[1px] bg-blue-500"></div>
             
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/50 text-blue-400 rounded-full text-xs font-semibold mb-3 tracking-wide border border-blue-500/30">
-                🌐 ASSETS INTERFACE
+            <div class="relative z-10 space-y-2">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/50 text-blue-400 rounded-full text-xs font-semibold tracking-wide border border-blue-500/30">
+                    🌐 ASSETS INTERFACE
+                </div>
+                <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight">
+                    域名展示
+                </h1>
+                <p class="text-slate-400 text-sm">高效、直观地集中管理域名数据</p>
+                
+                <div class="flex items-center gap-2 text-xs font-mono text-slate-400 bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-800/80 w-fit mt-3">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                    <span>系统已安全运行:</span>
+                    <span id="runtime-display" class="text-blue-400 font-bold">0天 00时 00分 00秒</span>
+                </div>
             </div>
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-tight mb-1.5">域名展示</h1>
-            <p class="text-slate-400 text-sm">高效、直观地集中管理域名数据</p>
-        </header>
 
-        <div class="grid grid-cols-3 gap-3 max-w-3xl mx-auto mb-8" id="stats">
-            <div class="glass-panel p-3 rounded-xl shadow-xs text-center relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
-                <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">总域名数</div>
-                <div class="text-xl font-mono font-black mt-0.5 text-white" id="stat-total">-</div>
-            </div>
-            <div class="glass-panel p-3 rounded-xl shadow-xs text-center border-emerald-500/20 relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
-                <div class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">正常 / 启用</div>
-                <div class="text-xl font-mono font-black mt-0.5 text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]" id="stat-up">-</div>
-            </div>
-            <div class="glass-panel p-3 rounded-xl shadow-xs text-center border-rose-500/20 relative overflow-hidden">
-                <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent"></div>
-                <div class="text-[11px] text-rose-400 font-bold uppercase tracking-wider">异常 / 停用</div>
-                <div class="text-xl font-mono font-black mt-0.5 text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.2)]" id="stat-down">-</div>
+            <div class="grid grid-cols-3 gap-3 min-w-[320px] md:min-w-[420px]">
+                <div class="glass-panel p-3.5 rounded-xl shadow-xs text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+                    <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">总域名数</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-white" id="stat-total">-</div>
+                </div>
+                <div class="glass-panel p-3.5 rounded-xl shadow-xs text-center border-emerald-500/20 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
+                    <div class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">正常 / 启用</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-emerald-400 drop-shadow-[0_0_10px_rgba(16,185,129,0.2)]" id="stat-up">-</div>
+                </div>
+                <div class="glass-panel p-3.5 rounded-xl shadow-xs text-center border-rose-500/20 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent"></div>
+                    <div class="text-[11px] text-rose-400 font-bold uppercase tracking-wider">异常 / 停用</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-rose-400 drop-shadow-[0_0_10px_rgba(244,63,94,0.2)]" id="stat-down">-</div>
+                </div>
             </div>
         </div>
 
@@ -86,7 +93,28 @@
     </div>
 
     <script>
-        // 严格回归原版路径
+        // --- 运行时间计算逻辑 ---
+        // 请在此处填写你的建站时间 (格式：年/月/日 时:分:秒)
+        const startDate = new Date("2025/01/01 00:00:00"); 
+        
+        function updateRuntime() {
+            const now = new Date();
+            const diff = now - startDate;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const pad = (num) => String(num).padStart(2, '0');
+            
+            document.getElementById("runtime-display").innerText = 
+                `${days}天 ${pad(hours)}时 ${pad(minutes)}分 ${pad(seconds)}秒`;
+        }
+        setInterval(updateRuntime, 1000);
+        updateRuntime();
+
+        // --- 核心数据请求与渲染逻辑 ---
         fetch('/api/config')
         .then(r => r.json())
         .then(data => {
@@ -100,12 +128,11 @@
 
             let upCount = 0;
             data.forEach(d => {
-                // 严格回归原版状态检测 ('up')
                 const isUp = d.status === 'up';
                 if(isUp) upCount++;
                 
                 el.innerHTML += `
-                    <div class="glass-card backdrop-blur-md p-4 rounded-xl shadow-xs hover:to-indigo-950/20 transition-all duration-200 flex items-center justify-between relative overflow-hidden group">
+                    <div class="glass-card backdrop-blur-md p-4 rounded-xl shadow-xs transition-all duration-200 flex items-center justify-between relative overflow-hidden group">
                         <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-600' : 'bg-gradient-to-b from-rose-400 to-rose-600'}"></div>
                         
                         <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
