@@ -3,95 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>域名展示</title>
+    <title>域名资产监控系统</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
+        /* 科技感核心样式定制 */
         body {
-            background-color: #f4f7fa;
+            background-color: #030712;
+            /* 科技感背景图元素：结合数字点阵、暗色渐变与科幻光晕 */
             background-image: 
-                radial-gradient(at 0% 0%, rgba(224, 231, 255, 0.4) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(240, 253, 244, 0.4) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 40%),
+                radial-gradient(at 100% 0%, rgba(147, 51, 234, 0.15) 0px, transparent 40%),
+                radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.05) 0px, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.005) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.005) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+        }
+
+        /* 赛博朋克霓虹边框呼吸灯 */
+        .cyber-glow {
+            box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.2), 0 0 15px -5px rgba(147, 51, 234, 0.2);
+        }
+
+        /* 磨砂玻璃拟态 */
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+
+        /* 列表卡片悬停高光与上浮 */
+        .glass-card {
+            background: rgba(31, 41, 55, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .glass-card:hover {
+            background: rgba(31, 41, 55, 0.7);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.3);
+        }
+
+        /* 强化的状态呼吸灯 */
+        .status-pulse-green {
+            box-shadow: 0 0 12px #10b981;
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen">
+<body class="text-slate-200 antialiased min-h-screen selection:bg-blue-500/30 selection:text-blue-200">
 
-    <div class="max-w-6xl mx-auto px-4 py-10">
-        <header class="text-center mb-10">
-            <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold mb-3 tracking-wide border border-indigo-100/50">
-                🌐 ASSETS INTERFACE
+    <div class="max-w-6xl mx-auto px-4 py-12">
+        <header class="text-center mb-12 relative">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-20 bg-blue-500/10 blur-3xl rounded-full pointer-events-none"></div>
+            
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-950/60 text-blue-400 rounded-full text-xs font-semibold mb-4 tracking-widest border border-blue-500/30 uppercase shadow-[0_0_15px_rgba(59,130,246,0.15)]">
+                <span class="w-1.5 h-1.5 bg-blue-400 rounded-full animate-ping"></span>
+                Assets Control Interface
             </div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-1.5">域名展示</h1>
-            <p class="text-slate-500 text-sm">高效、直观地集中管理域名数据</p>
+            <h1 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400 tracking-wider mb-3">
+                域名网络资产监控
+            </h1>
+            <p class="text-slate-400 text-sm max-w-md mx-auto font-light tracking-wide">
+                实时节点链路解析与多维度状态监控控制台
+            </p>
         </header>
 
-        <div class="grid grid-cols-3 gap-3 max-w-3xl mx-auto mb-8" id="stats">
-            <div class="bg-white/80 backdrop-blur-md p-3 rounded-xl border border-slate-200/60 shadow-xs text-center">
-                <div class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">总域名数</div>
-                <div class="text-xl font-black mt-0.5 text-slate-800" id="stat-total">-</div>
+        <div class="glass-panel cyber-glow rounded-2xl p-6 mb-10 grid grid-cols-3 gap-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent"></div>
+            
+            <div class="text-center p-4 relative group">
+                <div class="text-xs text-slate-400 font-medium tracking-widest uppercase mb-1">监控总数</div>
+                <div id="stat-total" class="text-4xl font-light font-mono text-white tracking-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">-</div>
+                <div class="text-[10px] text-blue-400/60 font-mono mt-1">TOTAL DOMAINS</div>
             </div>
-            <div class="bg-emerald-50/60 backdrop-blur-md p-3 rounded-xl border border-emerald-100 shadow-xs text-center">
-                <div class="text-[11px] text-emerald-600/80 font-bold uppercase tracking-wider">正常 / 启用</div>
-                <div class="text-xl font-black mt-0.5 text-emerald-700" id="stat-up">-</div>
+            
+            <div class="text-center p-4 border-x border-slate-800/60 relative">
+                <div class="text-xs text-emerald-400 font-medium tracking-widest uppercase mb-1">运行正常</div>
+                <div id="stat-up" class="text-4xl font-light font-mono text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]">-</div>
+                <div class="text-[10px] text-emerald-500/60 font-mono mt-1">ACTIVE NODES</div>
             </div>
-            <div class="bg-rose-50/60 backdrop-blur-md p-3 rounded-xl border border-rose-100 shadow-xs text-center">
-                <div class="text-[11px] text-rose-600/80 font-bold uppercase tracking-wider">异常 / 停用</div>
-                <div class="text-xl font-black mt-0.5 text-rose-700" id="stat-down">-</div>
+            
+            <div class="text-center p-4">
+                <div class="text-xs text-rose-400 font-medium tracking-widest uppercase mb-1">检测异常</div>
+                <div id="stat-down" class="text-4xl font-light font-mono text-rose-400 drop-shadow-[0_0_15px_rgba(244,63,94,0.3)]">-</div>
+                <div class="text-[10px] text-rose-500/60 font-mono mt-1">EXCEPTION ALERT</div>
             </div>
         </div>
 
-        <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div class="animate-pulse bg-white/60 p-4 rounded-xl border border-slate-200/60 h-20"></div>
-            <div class="animate-pulse bg-white/60 p-4 rounded-xl border border-slate-200/60 h-20"></div>
-            <div class="animate-pulse bg-white/60 p-4 rounded-xl border border-slate-200/60 h-20"></div>
+        <div id="list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="col-span-full text-center py-20 glass-panel rounded-xl">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent mb-3"></div>
+                <p class="text-slate-400 text-sm font-mono tracking-wider">LOADING DATALINK...</p>
+            </div>
         </div>
     </div>
 
     <script>
-        fetch('/api/config')
-        .then(r => r.json())
-        .then(data => {
-            const el = document.getElementById('list');
-            el.innerHTML = '';
-            
-            if(data.length === 0) {
-                el.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 text-sm">暂无任何域名资产数据</div>`;
-                return;
-            }
-
+        fetch('https://api.6v.cm/api/domain.php')
+        .then(res => res.json())
+        .then(res => {
+            const data = res.data || [];
             let upCount = 0;
+            let listHtml = '';
+
             data.forEach(d => {
-                const isUp = d.status === 'up';
-                if(isUp) upCount++;
-                
-                // 核心改动：
-                // 1. 域名大小调整为 text-xl (更醒目大方)
-                // 2. 卡片加入 bg-gradient-to-br 从白到淡蓝灰的精致渐变背景
-                el.innerHTML += `
-                    <div class="bg-gradient-to-br from-white to-slate-50/60 backdrop-blur-md p-4 rounded-xl border border-slate-200/80 shadow-xs hover:shadow-md hover:border-slate-300 hover:to-indigo-50/20 transition-all duration-200 flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-emerald-500' : 'bg-rose-500'}"></div>
+                const isUp = d.status === '200';
+                if (isUp) upCount++;
+
+                listHtml += `
+                    <div class="glass-card rounded-xl p-5 flex items-center justify-between gap-4 relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-[3px] ${isUp ? 'bg-gradient-to-b from-emerald-500 to-teal-600' : 'bg-gradient-to-b from-rose-500 to-orange-600'}"></div>
                         
-                        <div class="pl-2 flex flex-col gap-0.5">
-                            <h3 class="text-xl font-black text-slate-800 tracking-tight group-hover:text-indigo-600 transition-colors font-mono">${d.domain}</h3>
-                            <div class="flex items-center gap-2 text-xs">
-                                <span class="text-slate-400 font-medium">${d.memo || '暂无备注'}</span>
-                                ${d.price ? `<span class="inline-flex items-center text-amber-700 font-bold bg-amber-50 border border-amber-100/70 px-1.5 py-0.5 rounded text-[10px]">💰 ￥${d.price}</span>` : ''}
+                        <div class="space-y-2 min-w-0">
+                            <div class="flex items-center gap-2.5">
+                                <a href="http://${d.domain}" target="_blank" class="font-mono text-base font-medium text-white hover:text-blue-400 transition-colors truncate tracking-wide">
+                                    ${d.domain}
+                                </a>
+                            </div>
+                            
+                            <div class="flex flex-wrap items-center gap-2 text-xs">
+                                <span class="text-slate-400 font-light bg-slate-900/40 px-2 py-0.5 rounded border border-slate-800/50">${d.memo || '无描述标签'}</span>
+                                ${d.price ? `
+                                    <span class="inline-flex items-center gap-1 text-amber-400 font-mono font-medium bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                                        <span class="text-[10px] text-amber-500">￥</span>${d.price}
+                                    </span>
+                                ` : ''}
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-1.5 ${isUp ? 'bg-emerald-50/80 border-emerald-100/80 text-emerald-700' : 'bg-rose-50/80 border-rose-100/80 text-rose-700'} px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0">
-                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}"></span>
-                            <span class="text-[11px] tracking-wider">${isUp ? '正常' : '异常'}</span>
+                        <div class="flex items-center space-x-2.5 ${isUp ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'} px-3 py-1.5 rounded-lg border text-xs font-mono tracking-widest shrink-0 transition-all">
+                            <span class="h-2 w-2 rounded-full ${isUp ? 'bg-emerald-400 status-pulse-green' : 'bg-rose-500 shadow-[0_0_10px_#f43f5e]'}"></span>
+                            <span class="font-bold text-[11px] uppercase">${isUp ? 'ONLINE' : 'OFFLINE'}</span>
                         </div>
                     </div>
                 `;
             });
 
+            document.getElementById('list').innerHTML = listHtml;
             document.getElementById('stat-total').innerText = data.length;
             document.getElementById('stat-up').innerText = upCount;
             document.getElementById('stat-down').innerText = data.length - upCount;
         }).catch(err => {
-            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-500 text-sm font-medium">❌ 加载失败，请检查 Cloudflare KV 绑定或 API 配置</div>`;
+            document.getElementById('list').innerHTML = `
+                <div class="col-span-full text-center py-12 glass-panel rounded-xl border-rose-500/20">
+                    <span class="text-2xl block mb-2">⚠️</span>
+                    <p class="text-rose-400 text-sm font-mono">CORE SYSTEM LINK FAILURE</p>
+                    <p class="text-slate-500 text-xs mt-1">${err.message}</p>
+                </div>
+            `;
         });
     </script>
 </body>
