@@ -37,13 +37,14 @@
             background-attachment: fixed;
             transition: background-image 0.5s ease-in-out;
         }
-        /* 暗色遮罩：深邃科技 */
+        
+        /* 【关键修复】大幅度加深暗色遮罩层，从 0.85 提升至 0.94，确保压制住背景复杂的复杂图片 */
         .dark .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, rgba(3, 7, 18, 0.85), rgba(3, 7, 18, 0.93));
-            backdrop-filter: blur(4px);
+            background: linear-gradient(to bottom, rgba(3, 7, 20, 0.92), rgba(3, 7, 20, 0.96));
+            backdrop-filter: blur(8px);
         }
-        /* 亮色遮罩：高光通透 */
+        /* 亮色遮罩 */
         .light .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(to bottom, rgba(248, 250, 252, 0.85), rgba(241, 245, 249, 0.92));
@@ -51,8 +52,8 @@
         }
 
         .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(15, 23, 42, 0.85); /* 提升面板不透明度 */
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .light .glass-panel {
             background: rgba(255, 255, 255, 0.75);
@@ -60,15 +61,17 @@
             box-shadow: 0 4px 20px -5px rgba(15, 23, 42, 0.05);
         }
 
+        /* 【关键修复】强化卡片在暗黑模式下的实体感，避免融入背景 */
         .dark .glass-card {
-            background: rgba(31, 41, 55, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(17, 24, 39, 0.75); /* 提高基底色黑度 */
+            border: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .dark .glass-card:hover {
-            background: rgba(31, 41, 55, 0.6);
-            border-color: rgba(59, 130, 246, 0.4);
+            background: rgba(24, 32, 51, 0.9);
+            border-color: rgba(59, 130, 246, 0.5);
             transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
         }
 
         .light .glass-card {
@@ -83,58 +86,66 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px -10px rgba(59, 130, 246, 0.15);
         }
+
+        /* 【新增强调】为暗色下的标题增加极其微弱的荧光文字阴影，保证绝对清晰 */
+        .dark .text-glow {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+        }
+        .light .text-glow {
+            text-shadow: none;
+        }
     </style>
 </head>
-<body class="dark text-slate-200 dark:text-slate-200 light:text-slate-800 antialiased min-h-screen transition-colors duration-300">
+<body class="dark text-slate-100 dark:text-slate-100 light:text-slate-800 antialiased min-h-screen transition-colors duration-300">
 
     <div id="custom-bg" class="bg-overlay"></div>
 
     <div class="max-w-6xl mx-auto px-4 py-12">
         
         <div class="flex justify-end mb-4">
-            <button onclick="toggleTheme()" class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-800/60 dark:border-slate-800/60 light:border-slate-200 bg-slate-900/40 dark:bg-slate-900/40 light:bg-white/80 backdrop-blur-md text-xs font-medium tracking-wide shadow-xs transition-all hover:scale-105">
-                <span id="theme-icon">🌙</span> <span id="theme-text" class="dark:text-slate-300 light:text-slate-600">暗黑模式</span>
+            <button onclick="toggleTheme()" class="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-800 bg-slate-900 dark:bg-slate-900 light:bg-white/80 backdrop-blur-md text-xs font-semibold tracking-wide shadow-md transition-all hover:scale-105">
+                <span id="theme-icon">🌙</span> <span id="theme-text" class="text-white dark:text-white light:text-slate-600">暗黑模式</span>
             </button>
         </div>
         
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12 pb-8 border-b border-slate-800/40 dark:border-slate-800/40 light:border-slate-200 relative">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12 pb-8 border-b border-slate-800 dark:border-slate-800 light:border-slate-200 relative">
             <div class="absolute -bottom-[1px] left-0 w-32 h-[1px] bg-blue-500"></div>
             
             <div class="relative z-10 space-y-2">
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/40 dark:bg-blue-950/40 light:bg-blue-50 text-blue-400 dark:text-blue-400 light:text-blue-600 rounded-full text-xs font-semibold tracking-wide border border-blue-500/20 dark:border-blue-500/20 light:border-blue-200">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-blue-950/60 dark:bg-blue-950/60 light:bg-blue-50 text-blue-400 dark:text-blue-400 light:text-blue-600 rounded-full text-xs font-semibold tracking-wide border border-blue-500/30">
                     🌐 ASSETS CONTROL
                 </div>
-                <h1 class="text-4xl font-black text-slate-900 dark:text-white light:text-slate-900 tracking-tight">
+                <h1 class="text-4xl font-black text-white dark:text-white light:text-slate-900 tracking-tight text-glow">
                     域名展示
                 </h1>
                 <p class="text-slate-400 dark:text-slate-400 light:text-slate-500 text-sm">多模态自适应资产可视化控制台</p>
                 
-                <div class="flex items-center gap-2 text-xs font-mono text-slate-400 dark:text-slate-400 light:text-slate-600 bg-slate-900/50 dark:bg-slate-900/50 light:bg-white/60 px-3 py-1.5 rounded-lg border border-slate-800/60 dark:border-slate-800/60 light:border-slate-200 w-fit mt-3 shadow-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></span>
+                <div class="flex items-center gap-2 text-xs font-mono text-slate-300 dark:text-slate-300 light:text-slate-600 bg-slate-950/80 dark:bg-slate-950/80 light:bg-white/60 px-3 py-1.5 rounded-lg border border-slate-800 w-fit mt-3 shadow-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]"></span>
                     <span>系统已安全运行:</span>
-                    <span id="runtime-display" class="text-blue-500 dark:text-blue-400 light:text-blue-600 font-bold">0天 00时 00分 00秒</span>
+                    <span id="runtime-display" class="text-blue-400 dark:text-blue-400 light:text-blue-600 font-bold">0天 00时 00分 00秒</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-3 gap-3 min-w-[320px] md:min-w-[420px]">
                 <div class="glass-panel p-3.5 rounded-xl text-center relative overflow-hidden">
                     <div class="text-[11px] text-slate-400 dark:text-slate-400 light:text-slate-500 font-bold uppercase tracking-wider">总域名数</div>
-                    <div class="text-2xl font-mono font-black mt-0.5 text-slate-900 dark:text-white light:text-slate-900" id="stat-total">-</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-white dark:text-white light:text-slate-900" id="stat-total">-</div>
                 </div>
-                <div class="glass-panel p-3.5 rounded-xl text-center border-emerald-500/20 dark:border-emerald-500/20 light:border-emerald-200 relative overflow-hidden">
-                    <div class="text-[11px] text-emerald-500 dark:text-emerald-400 light:text-emerald-600 font-bold uppercase tracking-wider">正常 / 启用</div>
-                    <div class="text-2xl font-mono font-black mt-0.5 text-emerald-500 dark:text-emerald-400 light:text-emerald-600" id="stat-up">-</div>
+                <div class="glass-panel p-3.5 rounded-xl text-center border-emerald-500/30 relative overflow-hidden">
+                    <div class="text-[11px] text-emerald-400 font-bold uppercase tracking-wider">正常 / 启用</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-emerald-400" id="stat-up">-</div>
                 </div>
-                <div class="glass-panel p-3.5 rounded-xl text-center border-rose-500/20 dark:border-rose-500/20 light:border-rose-200 relative overflow-hidden">
-                    <div class="text-[11px] text-rose-500 dark:text-rose-400 light:text-rose-600 font-bold uppercase tracking-wider">异常 / 停用</div>
-                    <div class="text-2xl font-mono font-black mt-0.5 text-rose-500 dark:text-rose-400 light:text-rose-600" id="stat-down">-</div>
+                <div class="glass-panel p-3.5 rounded-xl text-center border-rose-500/30 relative overflow-hidden">
+                    <div class="text-[11px] text-rose-400 font-bold uppercase tracking-wider">异常 / 停用</div>
+                    <div class="text-2xl font-mono font-black mt-0.5 text-rose-400" id="stat-down">-</div>
                 </div>
             </div>
         </div>
 
         <div id="list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div class="animate-pulse bg-slate-900/20 dark:bg-slate-900/20 light:bg-slate-200/50 p-4 rounded-xl h-20"></div>
-            <div class="animate-pulse bg-slate-900/20 dark:bg-slate-900/20 light:bg-slate-200/50 p-4 rounded-xl h-20"></div>
+            <div class="animate-pulse bg-slate-950/40 p-4 rounded-xl h-20"></div>
+            <div class="animate-pulse bg-slate-950/40 p-4 rounded-xl h-20"></div>
         </div>
     </div>
 
@@ -195,12 +206,10 @@
                 domainList = resData;
             } else if (resData && typeof resData === 'object') {
                 domainList = resData.domains || [];
-                // 读取暗色与亮色独立自定义背景图
                 cachedBgDark = resData.backgroundImageDark || resData.backgroundImage || '';
                 cachedBgLight = resData.backgroundImageLight || '';
             }
 
-            // 初始化应用当前模式背景
             applyBackgroundImage(document.body.classList.contains('dark') ? cachedBgDark : cachedBgLight);
 
             const el = document.getElementById('list');
@@ -216,20 +225,21 @@
                 const isUp = d.status === 'up';
                 if(isUp) upCount++;
                 
+                // 【关键修复】这里的 h3 强制使用 text-white 并在暗黑模式下自带 text-glow 效果，备注颜色调亮至 text-slate-300
                 el.innerHTML += `
-                    <div class="glass-card p-4 rounded-xl transition-all flex items-center justify-between relative overflow-hidden group">
-                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-600' : 'bg-gradient-to-b from-rose-400 to-rose-600'}"></div>
+                    <div class="glass-card p-4 rounded-xl flex items-center justify-between relative overflow-hidden group">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-500' : 'bg-gradient-to-b from-rose-400 to-rose-500'}"></div>
                         
                         <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
-                            <h3 class="text-xl font-black text-slate-800 dark:text-white light:text-slate-800 tracking-tight group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors font-mono truncate">${d.domain}</h3>
+                            <h3 class="text-xl font-black text-white dark:text-white light:text-slate-800 tracking-tight group-hover:text-blue-400 light:group-hover:text-blue-600 transition-colors font-mono truncate text-glow">${d.domain}</h3>
                             <div class="flex items-center gap-2 text-xs">
-                                <span class="text-slate-400 dark:text-slate-400 light:text-slate-500 font-medium truncate">${d.memo || '暂无备注'}</span>
-                                ${d.price ? `<span class="inline-flex items-center text-amber-600 dark:text-amber-400 font-mono font-bold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px]">￥${d.price}</span>` : ''}
+                                <span class="text-slate-300 dark:text-slate-300 light:text-slate-500 font-medium truncate">${d.memo || '暂无备注'}</span>
+                                ${d.price ? `<span class="inline-flex items-center text-amber-400 dark:text-amber-400 light:text-amber-600 font-mono font-bold bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded text-[10px]">￥${d.price}</span>` : ''}
                             </div>
                         </div>
 
-                        <div class="flex items-center space-x-1.5 ${isUp ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-600 dark:text-rose-400'} px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0">
-                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e]'}"></span>
+                        <div class="flex items-center space-x-1.5 ${isUp ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-rose-500/15 border-rose-500/30 text-rose-400'} px-2 py-1 rounded-lg border text-xs font-bold transition-colors shrink-0">
+                            <span class="h-1.5 w-1.5 rounded-full ${isUp ? 'bg-emerald-400 animate-pulse shadow-[0_0_8px_#10b981]' : 'bg-rose-500 shadow-[0_0_8px_#f43f5e]'}"></span>
                             <span class="text-[11px] tracking-wider">${isUp ? '正常' : '异常'}</span>
                         </div>
                     </div>
@@ -240,7 +250,7 @@
             document.getElementById('stat-up').innerText = upCount;
             document.getElementById('stat-down').innerText = domainList.length - upCount;
         }).catch(err => {
-            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-500 text-sm font-medium border border-rose-950/20 bg-rose-950/5 rounded-xl">❌ 数据同步失败，请检查 API 状态<br><span class="text-xs text-slate-500 font-mono mt-1 inline-block">${err.message}</span></div>`;
+            document.getElementById('list').innerHTML = `<div class="col-span-full text-center py-12 text-rose-400 text-sm font-medium border border-rose-950/40 bg-rose-950/20 rounded-xl">❌ 数据同步失败，请检查 API 状态<br><span class="text-xs text-slate-500 font-mono mt-1 inline-block">${err.message}</span></div>`;
         });
     </script>
 </body>
