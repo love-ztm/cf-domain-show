@@ -152,7 +152,6 @@
                 applyBackgroundImage(cachedBgDark);
             }
             
-            // 关键：切换模式后重新渲染列表，以便字体颜色动态调整
             renderList(cachedDomains);
         }
 
@@ -165,7 +164,7 @@
             }
         }
 
-        // --- 核心渲染函数：根据明暗模式动态注入对应文字色彩 ---
+        // --- 核心渲染函数 ---
         function renderList(domainList) {
             const el = document.getElementById('list');
             el.innerHTML = '';
@@ -177,30 +176,32 @@
 
             const isCurrentDark = document.body.classList.contains('dark');
             
-            // 智能计算并分配黑白对比度类名
             const titleColorClass = isCurrentDark ? 'text-white' : 'text-slate-900';
             const memoColorClass = isCurrentDark ? 'text-slate-300' : 'text-slate-600';
-            const priceBgClass = isCurrentDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-800';
+            // 提升价格标签在亮色模式下的对比度
+            const priceBgClass = isCurrentDark ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' : 'bg-amber-500/15 border-amber-500/40 text-amber-900';
 
             let upCount = 0;
             domainList.forEach(d => {
                 const isUp = d.status === 'up';
                 if(isUp) upCount++;
                 
-                // 状态标签色彩样式
                 const statusBadgeClass = isUp 
                     ? (isCurrentDark ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' : 'bg-emerald-50 border-emerald-200 text-emerald-700')
                     : (isCurrentDark ? 'bg-rose-500/15 border-rose-500/30 text-rose-400' : 'bg-rose-50 border-rose-200 text-rose-700');
 
+                // 【核心修复】将价格节点移入 <h3> 内部并设置为 flex 项，通过 text-sm 或 text-base 将其整体稍微放大
                 el.innerHTML += `
                     <div class="glass-card p-4 rounded-xl flex items-center justify-between relative overflow-hidden group">
                         <div class="absolute left-0 top-0 bottom-0 w-1 ${isUp ? 'bg-gradient-to-b from-emerald-400 to-emerald-500' : 'bg-gradient-to-b from-rose-400 to-rose-500'}"></div>
                         
-                        <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2">
-                            <h3 class="text-xl font-black ${titleColorClass} tracking-tight group-hover:text-blue-500 transition-colors font-mono truncate">${d.domain}</h3>
+                        <div class="pl-2 flex flex-col gap-0.5 min-w-0 pr-2 w-full">
+                            <h3 class="text-xl font-black ${titleColorClass} tracking-tight group-hover:text-blue-500 transition-colors font-mono flex items-center gap-2 flex-wrap min-w-0">
+                                <span class="truncate">${d.domain}</span>
+                                ${d.price ? `<span class="inline-flex items-center font-mono font-extrabold px-2 py-0.5 rounded-lg border text-sm shrink-0 shadow-xs ${priceBgClass}">￥${d.price}</span>` : ''}
+                            </h3>
                             <div class="flex items-center gap-2 text-xs">
                                 <span class="${memoColorClass} font-bold truncate">${d.memo || '暂无备注'}</span>
-                                ${d.price ? `<span class="inline-flex items-center font-mono font-bold px-1.5 py-0.5 rounded text-[10px] border ${priceBgClass}">￥${d.price}</span>` : ''}
                             </div>
                         </div>
 
@@ -244,7 +245,6 @@
                 cachedBgLight = resData.backgroundImageLight || '';
             }
 
-            // 初始化加载正确的背景图并渲染
             applyBackgroundImage(document.body.classList.contains('dark') ? cachedBgDark : cachedBgLight);
             renderList(cachedDomains);
         }).catch(err => {
