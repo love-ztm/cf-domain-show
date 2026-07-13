@@ -82,10 +82,35 @@
             </button>
         </div>
 
+        <div id="batch-panel" class="hidden bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-4 transition-all">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-bold text-indigo-900">⚡ 批量操作已选中 <span id="batch-count" class="text-indigo-600">0</span> 项 :</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 gap-1">
+                    <select id="batch-status" class="px-2 py-1 text-xs bg-transparent focus:outline-none">
+                        <option value="">-- 修改状态 --</option>
+                        <option value="up">全部设为: 正常</option>
+                        <option value="down">全部设为: 异常</option>
+                    </select>
+                    <input id="batch-price" type="number" placeholder="统一价格" class="w-20 px-2 py-1 text-xs border-l border-slate-200 focus:outline-none">
+                    <button onclick="applyBatchEdit()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded transition-colors cursor-pointer">
+                        应用修改
+                    </button>
+                </div>
+                <button onclick="applyBatchDelete()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg transition-colors cursor-pointer shadow-xs">
+                    🗑️ 批量删除
+                </button>
+            </div>
+        </div>
+
         <div class="bg-white rounded-xl border border-slate-100 shadow-xs overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                        <th class="p-4 w-12 text-center">
+                            <input type="checkbox" id="th-select-all" onchange="toggleSelectAll(this)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                        </th>
                         <th class="p-4 w-1/4">域名</th>
                         <th class="p-4 w-1/4">备注</th>
                         <th class="p-4 w-1/6">价格</th>
@@ -153,9 +178,10 @@
                 let bgLight = '';
 
                 if (Array.isArray(resData)) {
-                    domainList = resData;
+                    // 为拉取的数据默认初始化 selected 状态属性
+                    domainList = resData.map(item => ({ ...item, _selected: false }));
                 } else if (resData && typeof resData === 'object') {
-                    domainList = resData.domains || [];
+                    domainList = (resData.domains || []).map(item => ({ ...item, _selected: false }));
                     bgDark = resData.backgroundImageDark || resData.backgroundImage || '';
                     bgLight = resData.backgroundImageLight || '';
                 }
@@ -171,14 +197,18 @@
         function renderTable() {
             const tbody = document.getElementById('domain-rows');
             if (domainList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">资产列表为空</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-400">资产列表为空</td></tr>`;
+                updateBatchPanel();
                 return;
             }
 
             tbody.innerHTML = domainList.map((item, index) => {
+                const isChecked = item._selected ? 'checked' : '';
+                
                 if (editIndex === index) {
                     return `
                         <tr class="bg-indigo-50/30">
+                            <td class="p-3 text-center"></td>
                             <td class="p-3"><input id="edit-domain" type="text" value="${item.domain}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
                             <td class="p-3"><input id="edit-memo" type="text" value="${item.memo || ''}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
                             <td class="p-3"><input id="edit-price" type="number" value="${item.price || ''}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
@@ -197,7 +227,10 @@
                 }
 
                 return `
-                    <tr class="hover:bg-slate-50/50 transition-colors">
+                    <tr class="hover:bg-slate-50/50 transition-colors ${item._selected ? 'bg-slate-50' : ''}">
+                        <td class="p-4 text-center">
+                            <input type="checkbox" ${isChecked} onchange="toggleRowSelect(${index}, this.checked)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                        </td>
                         <td class="p-4 font-mono font-medium text-slate-700">${item.domain}</td>
                         <td class="p-4 text-slate-500">${item.memo || '-'}</td>
                         <td class="p-4 text-amber-600 font-semibold">${item.price ? '￥' + item.price : '-'}</td>
@@ -213,8 +246,81 @@
                     </tr>
                 `;
             }).join('');
+
+            // 同步更新全选框和批量面板状态
+            const allChecked = domainList.every(item => item._selected);
+            document.getElementById('th-select-all').checked = allChecked;
+            updateBatchPanel();
         }
 
+        // --- 多选/全选逻辑控制 ---
+        function toggleRowSelect(index, isChecked) {
+            domainList[index]._selected = isChecked;
+            updateBatchPanel();
+            // 如果单选改变，同步刷新全选框状态
+            const allChecked = domainList.every(item => item._selected);
+            document.getElementById('th-select-all').checked = allChecked;
+        }
+
+        function toggleSelectAll(masterCheckbox) {
+            const isChecked = masterCheckbox.checked;
+            domainList.forEach(item => item._selected = isChecked);
+            renderTable();
+        }
+
+        function updateBatchPanel() {
+            const selectedCount = domainList.filter(item => item._selected).length;
+            const panel = document.getElementById('batch-panel');
+            const countSpan = document.getElementById('batch-count');
+            
+            if (selectedCount > 0) {
+                countSpan.innerText = selectedCount;
+                panel.classList.remove('hidden');
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+
+        // --- 功能新增：应用批量编辑 ---
+        function applyBatchEdit() {
+            const nextStatus = document.getElementById('batch-status').value;
+            const nextPrice = document.getElementById('batch-price').value.trim();
+
+            if (!nextStatus && !nextPrice) {
+                return showToast('请至少选择一个修改项（状态或价格）', 'error');
+            }
+
+            let changeCount = 0;
+            domainList.forEach(item => {
+                if (item._selected) {
+                    if (nextStatus) item.status = nextStatus;
+                    if (nextPrice) item.price = nextPrice;
+                    changeCount++;
+                }
+            });
+
+            showToast(`成功批量修改 ${changeCount} 项！请记得点击下方按钮同步到云端。`, 'success');
+            
+            // 重置批量编辑栏输入内容
+            document.getElementById('batch-status').value = "";
+            document.getElementById('batch-price').value = "";
+            renderTable();
+        }
+
+        // --- 功能新增：应用批量删除 ---
+        function applyBatchDelete() {
+            const selectedCount = domainList.filter(item => item._selected).length;
+            if (selectedCount === 0) return;
+
+            if (confirm(`确定要永久删除选中的 ${selectedCount} 个域名资产吗？`)) {
+                // 过滤掉选中的项
+                domainList = domainList.filter(item => !item._selected);
+                showToast(`已移出列表！请务必点击下方按钮保存同步到云端。`, 'success');
+                renderTable();
+            }
+        }
+
+        // --- 单项加、改、删基本逻辑 ---
         function addDomain() {
             const domain = document.getElementById('new-domain').value.trim();
             const memo = document.getElementById('new-memo').value.trim();
@@ -222,7 +328,7 @@
             const status = document.getElementById('new-status').value;
 
             if (!domain) return showToast('域名不能为空', 'error');
-            domainList.push({ domain, memo, price, status });
+            domainList.push({ domain, memo, price, status, _selected: false });
             renderTable();
 
             document.getElementById('new-domain').value = '';
@@ -239,7 +345,10 @@
             const price = document.getElementById('edit-price').value.trim();
             const status = document.getElementById('edit-status').value;
             if (!domain) return showToast('域名不能为空', 'error');
-            domainList[index] = { domain, memo, price, status };
+            
+            // 保持原本的选择状态
+            const prevSelected = domainList[index]._selected;
+            domainList[index] = { domain, memo, price, status, _selected: prevSelected };
             editIndex = null;
             renderTable();
         }
@@ -251,14 +360,18 @@
             }
         }
 
-        // --- 构造当前的配置Payload ---
+        // --- 构造当前的配置Payload（过滤掉前端专用的 _selected 状态） ---
         function buildPayload() {
             const bgDark = document.getElementById('bg-url-dark').value.trim();
             const bgLight = document.getElementById('bg-url-light').value.trim();
+            
+            // 清理掉临时属性再准备上传或导出
+            const cleanedDomains = domainList.map(({ _selected, ...rest }) => rest);
+            
             return {
                 backgroundImageDark: bgDark,
                 backgroundImageLight: bgLight,
-                domains: domainList
+                domains: cleanedDomains
             };
         }
 
@@ -280,6 +393,8 @@
                     showToast('密码错或无权限，同步失败！', 'error');
                 } else if (res.ok) {
                     showToast('💾 所有资产与双模背景成功推送到云端！', 'success');
+                    // 保存成功后重新拉取以重置状态
+                    await loadDomains();
                 } else {
                     showToast('服务器拒绝存储响应', 'error');
                 }
@@ -288,14 +403,13 @@
             }
         }
 
-        // --- 新增：备份导出下载功能 ---
+        // --- 备份导出下载功能 ---
         function exportBackup() {
             try {
                 const payload = buildPayload();
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
                 const downloadAnchor = document.createElement('a');
                 
-                // 自动生成带当前日期的备份文件名
                 const dateStr = new Date().toISOString().slice(0, 10);
                 downloadAnchor.setAttribute("href", dataStr);
                 downloadAnchor.setAttribute("download", `cf_domain_backup_${dateStr}.json`);
@@ -308,12 +422,12 @@
             }
         }
 
-        // --- 新增：触发文件上传选择 ---
+        // --- 触发文件上传选择 ---
         function triggerImport() {
             document.getElementById('backup-file-input').click();
         }
 
-        // --- 新增：备份导入恢复处理功能 ---
+        // --- 备份导入恢复处理功能 ---
         function importBackup(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -323,28 +437,29 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     
-                    // 校验 JSON 基础结构合法性
                     if (!importedData || (typeof importedData !== 'object')) {
                         throw new Error('无效的 JSON 格式');
                     }
                     
-                    // 兼容旧版的单 domains 数组备份格式或标准对象格式
+                    let rawDomains = [];
                     if (Array.isArray(importedData)) {
-                        domainList = importedData;
+                        rawDomains = importedData;
                         document.getElementById('bg-url-dark').value = '';
                         document.getElementById('bg-url-light').value = '';
                     } else {
-                        domainList = importedData.domains || [];
+                        rawDomains = importedData.domains || [];
                         document.getElementById('bg-url-dark').value = importedData.backgroundImageDark || importedData.backgroundImage || '';
                         document.getElementById('bg-url-light').value = importedData.backgroundImageLight || '';
                     }
+
+                    // 导入时同样为其挂载 _selected 属性
+                    domainList = rawDomains.map(item => ({ ...item, _selected: false }));
 
                     renderTable();
                     showToast('📥 备份解析成功！请确认后点击下方“保存”推送到云端。', 'success');
                 } catch (err) {
                     showToast('解析备份文件失败，请确保是合法的 JSON 配置', 'error');
                 } finally {
-                    // 重置 input 以允许重复上传同一个文件
                     event.target.value = '';
                 }
             };
