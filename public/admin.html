@@ -19,12 +19,12 @@
             background-attachment: fixed;
             transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
         }
-        /* 背景半透明遮罩层 - 稍微降低暗度，提升透光率 */
+        /* 背景半透明遮罩层 */
         .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
             transition: background 0.5s ease-in-out;
         }
-        .mode-dark .bg-overlay::after { background: rgba(15, 23, 42, 0.35); }
+        .mode-dark .bg-overlay::after { background: rgba(15, 23, 42, 0.4); }
         .mode-light .bg-overlay::after { background: rgba(255, 255, 255, 0.2); }
 
         /* 高透光雾化磨砂面板样式 */
@@ -35,14 +35,14 @@
             border: 1px solid rgba(255, 255, 255, 0.5);
         }
         .mode-dark .glass-panel-admin {
-            background: rgba(15, 23, 42, 0.55);
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
     </style>
 </head>
-<body class="text-slate-950 mode-dark relative antialiased min-h-screen transition-colors duration-300">
+<body class="mode-dark relative antialiased min-h-screen transition-colors duration-300 bg-slate-900 text-slate-950 mode-dark:text-white">
 
     <div id="global-bg" class="bg-overlay"></div>
 
@@ -73,25 +73,25 @@
     <div id="admin-main" class="max-w-6xl mx-auto px-4 py-12 hidden-admin">
         <div class="flex justify-between items-center mb-6 glass-panel-admin p-5 rounded-2xl shadow-sm">
             <div>
-                <h2 class="text-2xl font-black text-slate-950 dark:text-white tracking-tight">⚙️ 资产控制台</h2>
-                <p class="text-slate-700 dark:text-slate-100 text-xs mt-0.5 font-extrabold tracking-wide">多功能资产维护与云端安全备份系统</p>
+                <h2 class="text-2xl font-black tracking-tight text-slate-950! dark:text-white!">⚙️ 资产控制台</h2>
+                <p class="text-xs mt-0.5 font-extrabold tracking-wide text-slate-700! dark:text-slate-100!">多功能资产维护与云端安全备份 system</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <button onclick="toggleAdminTheme()" class="px-3 py-2 text-xs font-black text-slate-950 dark:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-slate-600 bg-white/30 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer">
+                <button onclick="toggleAdminTheme()" class="px-3 py-2 text-xs font-black bg-white/30 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer border border-white/50 dark:border-slate-600 text-slate-950 dark:text-white">
                     🌓 切换模式
                 </button>
-                <button onclick="openSettingsModal()" class="px-3 py-2 text-xs font-black text-slate-950 dark:text-white hover:bg-white/60 dark:hover:bg-slate-800/60 border border-white/50 dark:border-slate-600 bg-white/30 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer">
+                <button onclick="openSettingsModal()" class="px-3 py-2 text-xs font-black bg-white/30 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer border border-white/50 dark:border-slate-600 text-slate-950 dark:text-white">
                     🛠️ 系统设置
                 </button>
-                <button onclick="exportBackup()" class="px-3 py-2 text-xs font-black text-indigo-800 dark:text-indigo-200 hover:bg-indigo-50/60 border border-indigo-300 dark:border-indigo-500 bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer">
+                <button onclick="exportBackup()" class="px-3 py-2 text-xs font-black bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer border border-indigo-300 dark:border-indigo-500 text-indigo-800 dark:text-indigo-200 hover:bg-indigo-50/60">
                     📦 导出备份
                 </button>
-                <button onclick="triggerImport()" class="px-3 py-2 text-xs font-black text-amber-800 dark:text-amber-200 hover:bg-amber-50/60 border border-amber-300 dark:border-amber-500 bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer">
+                <button onclick="triggerImport()" class="px-3 py-2 text-xs font-black bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer border border-amber-300 dark:border-amber-500 text-amber-800 dark:text-amber-200 hover:bg-amber-50/60">
                     📥 导入恢复
                 </button>
                 <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackup(event)">
                 
-                <button onclick="logout()" class="px-3 py-2 text-xs font-black text-rose-700 dark:text-rose-300 hover:bg-rose-50/60 border border-rose-300 dark:border-rose-500 bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer ml-2">
+                <button onclick="logout()" class="px-3 py-2 text-xs font-black bg-white/50 dark:bg-slate-900/50 rounded-lg transition-colors cursor-pointer ml-2 border border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-300 hover:bg-rose-50/60">
                     安全退出
                 </button>
             </div>
@@ -284,11 +284,11 @@
         function setThemeMode(mode) {
             const body = document.body;
             if (mode === 'dark') {
-                body.classList.remove('mode-light', 'text-slate-950');
-                body.classList.add('mode-dark', 'text-white');
+                body.classList.remove('mode-light');
+                body.classList.add('mode-dark');
             } else {
-                body.classList.remove('mode-dark', 'text-white');
-                body.classList.add('mode-light', 'text-slate-950');
+                body.classList.remove('mode-dark');
+                body.classList.add('mode-light');
             }
             applyGlobalBackground();
         }
@@ -369,14 +369,14 @@
         function renderTable() {
             const tbody = document.getElementById('domain-rows');
             if (domainList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-slate-950 dark:text-slate-100 font-black">资产列表为空</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center font-black text-slate-950! dark:text-slate-100!">资产列表为空</td></tr>`;
                 updateBatchPanel();
                 return;
             }
 
             const isDark = document.body.classList.contains('mode-dark');
-            const textMainClass = isDark ? 'text-white font-black' : 'text-slate-950 font-black';
-            const textSubClass = isDark ? 'text-slate-100 font-bold' : 'text-slate-800 font-bold';
+            const textMainClass = isDark ? 'text-white! font-black' : 'text-slate-950! font-black';
+            const textSubClass = isDark ? 'text-slate-100! font-bold' : 'text-slate-800! font-bold';
 
             tbody.innerHTML = domainList.map((item, index) => {
                 const isChecked = item._selected ? 'checked' : '';
@@ -395,7 +395,7 @@
                                 </select>
                             </td>
                             <td class="p-3 text-right space-x-2">
-                                <button onclick="confirmEdit(${index})" class="text-xs text-emerald-600 dark:text-emerald-300 font-black hover:underline cursor-pointer">确定</button>
+                                <button onclick="confirmEdit(${index})" class="text-xs text-emerald-600 dark:text-emerald-400 font-black hover:underline cursor-pointer">确定</button>
                                 <button onclick="cancelEdit()" class="text-xs text-slate-500 dark:text-slate-200 font-black hover:underline cursor-pointer">取消</button>
                             </td>
                         </tr>
