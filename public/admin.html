@@ -19,29 +19,43 @@
             background-attachment: fixed;
             transition: background-image 0.5s ease-in-out, background-color 0.5s ease-in-out;
         }
-        /* 背景半透明遮罩层 */
+        /* 背景半透明遮罩层 - 降低遮罩颜色浓度以完全释放背景图的色彩 */
         .bg-overlay::after {
             content: ''; position: absolute; inset: 0;
             transition: background 0.5s ease-in-out;
         }
-        .mode-dark .bg-overlay::after { background: rgba(15, 23, 42, 0.45); }
-        .mode-light .bg-overlay::after { background: rgba(255, 255, 255, 0.25); }
+        .mode-dark .bg-overlay::after { background: rgba(15, 23, 42, 0.3); }
+        .mode-light .bg-overlay::after { background: rgba(255, 255, 255, 0.1); }
+
+        /* 高透光雾化磨砂面板样式 */
+        .glass-panel-admin {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .mode-dark .glass-panel-admin {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
-<body class="text-slate-800 antialiased min-h-screen mode-dark relative">
+<body class="text-slate-800 dark:text-slate-100 antialiased min-h-screen mode-dark relative">
 
     <div id="global-bg" class="bg-overlay"></div>
 
     <div id="login-overlay" class="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
-        <div class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 border border-slate-200/50 text-center">
+        <div class="bg-white/40 dark:bg-slate-900/45 backdrop-blur-xl p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-4 border border-white/30 dark:border-slate-800/40 text-center">
             <div class="text-4xl mb-3">🔒</div>
             <h3 class="text-xl font-black text-slate-900 dark:text-white tracking-tight">安全控制台锁定</h3>
-            <p class="text-slate-500 text-xs mt-1 mb-6">请输入管理员密码解锁管理后台</p>
+            <p class="text-slate-500 dark:text-slate-400 text-xs mt-1 mb-6">请输入管理员密码解锁管理后台</p>
             
             <div class="space-y-3">
                 <input id="pwd-input" type="password" placeholder="请输入管理员密码" 
                        onkeydown="if(event.key==='Enter') loginCheck()"
-                       class="w-full px-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:border-indigo-500 text-center font-mono">
+                       class="w-full px-3 py-2.5 text-sm bg-white/50 dark:bg-slate-950/40 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:border-indigo-500 text-center font-mono">
                 <button onclick="loginCheck()" 
                         class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-colors cursor-pointer shadow-md">
                     确认解锁
@@ -49,49 +63,49 @@
             </div>
             <div id="login-err" class="text-rose-500 text-xs font-semibold mt-3 hidden">❌ 密码验证失败，请重试</div>
             
-            <div class="mt-6 pt-4 border-t border-slate-200/50 flex justify-center gap-4 text-xs text-slate-400">
-                <button onclick="setThemeMode('dark')" class="hover:text-indigo-500 cursor-pointer">🌙 暗黑预览</button>
-                <button onclick="setThemeMode('light')" class="hover:text-indigo-500 cursor-pointer">☀️ 亮色预览</button>
+            <div class="mt-6 pt-4 border-t border-slate-200/30 flex justify-center gap-4 text-xs text-slate-400">
+                <button onclick="setThemeMode('dark')" class="hover:text-indigo-400 cursor-pointer">🌙 暗黑预览</button>
+                <button onclick="setThemeMode('light')" class="hover:text-indigo-600 cursor-pointer">☀️ 亮色预览</button>
             </div>
         </div>
     </div>
 
     <div id="admin-main" class="max-w-5xl mx-auto px-4 py-12 hidden-admin">
-        <div class="flex justify-between items-center mb-8 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md p-4 rounded-2xl border border-slate-200/40 shadow-xs">
+        <div class="flex justify-between items-center mb-8 glass-panel-admin p-5 rounded-2xl shadow-sm">
             <div>
                 <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">⚙️ 资产控制台</h2>
-                <p class="text-slate-500 text-xs mt-0.5">多功能资产维护与云端安全备份系统</p>
+                <p class="text-slate-500 dark:text-slate-400 text-xs mt-0.5">多功能资产维护与云端安全备份系统</p>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <button onclick="toggleAdminTheme()" class="px-3 py-2 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-lg transition-colors cursor-pointer">
+                <button onclick="toggleAdminTheme()" class="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white/40 dark:hover:bg-slate-800/50 border border-white/40 dark:border-slate-700/60 bg-white/20 dark:bg-slate-900/30 rounded-lg transition-colors cursor-pointer">
                     🌓 切换模式
                 </button>
-                <button onclick="openSettingsModal()" class="px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white rounded-lg transition-colors cursor-pointer">
+                <button onclick="openSettingsModal()" class="px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white/40 dark:hover:bg-slate-800/50 border border-white/40 dark:border-slate-700/60 bg-white/20 dark:bg-slate-900/30 rounded-lg transition-colors cursor-pointer">
                     🛠️ 系统设置
                 </button>
-                <button onclick="exportBackup()" class="px-3 py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50 border border-indigo-200 bg-white rounded-lg transition-colors cursor-pointer">
+                <button onclick="exportBackup()" class="px-3 py-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50/50 border border-indigo-200/50 bg-white/40 dark:bg-slate-900/30 rounded-lg transition-colors cursor-pointer">
                     📦 导出备份
                 </button>
-                <button onclick="triggerImport()" class="px-3 py-2 text-xs font-bold text-amber-600 hover:bg-amber-50 border border-amber-200 bg-white rounded-lg transition-colors cursor-pointer">
+                <button onclick="triggerImport()" class="px-3 py-2 text-xs font-bold text-amber-600 dark:text-amber-400 hover:bg-amber-50/50 border border-amber-200/50 bg-white/40 dark:bg-slate-900/30 rounded-lg transition-colors cursor-pointer">
                     📥 导入恢复
                 </button>
                 <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackup(event)">
                 
-                <button onclick="logout()" class="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 bg-white rounded-lg transition-colors cursor-pointer ml-2">
+                <button onclick="logout()" class="px-3 py-2 text-xs font-bold text-rose-600 dark:text-rose-400 hover:bg-rose-50/50 border border-rose-200/50 bg-white/40 dark:bg-slate-900/30 rounded-lg transition-colors cursor-pointer ml-2">
                     安全退出
                 </button>
             </div>
         </div>
 
-        <div class="bg-white/90 backdrop-blur-md p-6 rounded-xl border border-slate-200/40 shadow-xs mb-8">
-            <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">添加新域名</h3>
+        <div class="glass-panel-admin p-6 rounded-xl shadow-xs mb-8">
+            <h3 class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">添加新域名</h3>
             <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                <input id="new-domain" type="text" placeholder="域名 (如 example.com)" class="sm:col-span-2 px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-indigo-500">
-                <input id="new-memo" type="text" placeholder="备注 (如 腾讯云)" class="px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-indigo-500">
-                <input id="new-price" type="number" placeholder="价格" class="px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-indigo-500">
-                <select id="new-status" class="px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-indigo-500">
-                    <option value="up">正常</option>
-                    <option value="down">异常</option>
+                <input id="new-domain" type="text" placeholder="域名 (如 example.com)" class="sm:col-span-2 px-3 py-2 text-sm bg-white/40 dark:bg-slate-950/30 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 placeholder-slate-400">
+                <input id="new-memo" type="text" placeholder="备注 (如 腾讯云)" class="px-3 py-2 text-sm bg-white/40 dark:bg-slate-950/30 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 placeholder-slate-400">
+                <input id="new-price" type="number" placeholder="价格" class="px-3 py-2 text-sm bg-white/40 dark:bg-slate-950/30 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 placeholder-slate-400">
+                <select id="new-status" class="px-3 py-2 text-sm bg-white/40 dark:bg-slate-950/30 border border-slate-200/60 dark:border-slate-800 text-slate-950 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500">
+                    <option value="up" class="text-slate-900">正常</option>
+                    <option value="down" class="text-slate-900">异常</option>
                 </select>
             </div>
             <button onclick="addDomain()" class="mt-4 px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg transition-colors cursor-pointer shadow-xs">
@@ -99,18 +113,18 @@
             </button>
         </div>
 
-        <div id="batch-panel" class="hidden bg-indigo-50 border border-indigo-100 p-4 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-4 transition-all">
+        <div id="batch-panel" class="hidden bg-indigo-500/20 backdrop-blur-md border border-indigo-500/30 p-4 rounded-xl mb-4 flex flex-wrap items-center justify-between gap-4 transition-all">
             <div class="flex items-center gap-2">
-                <span class="text-sm font-bold text-indigo-900">⚡ 批量操作已选中 <span id="batch-count" class="text-indigo-600">0</span> 项 :</span>
+                <span class="text-sm font-bold text-indigo-900 dark:text-indigo-200">⚡ 批量操作已选中 <span id="batch-count" class="text-indigo-600 dark:text-indigo-400">0</span> 项 :</span>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                <div class="flex items-center bg-white border border-slate-200 rounded-lg p-1 gap-1">
-                    <select id="batch-status" class="px-2 py-1 text-xs bg-transparent focus:outline-none">
-                        <option value="">-- 修改状态 --</option>
-                        <option value="up">全部设为: 正常</option>
-                        <option value="down">全部设为: 异常</option>
+                <div class="flex items-center bg-white/60 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-700 rounded-lg p-1 gap-1">
+                    <select id="batch-status" class="px-2 py-1 text-xs bg-transparent focus:outline-none dark:text-white">
+                        <option value="" class="text-slate-900">-- 修改状态 --</option>
+                        <option value="up" class="text-slate-900">全部设为: 正常</option>
+                        <option value="down" class="text-slate-900">全部设为: 异常</option>
                     </select>
-                    <input id="batch-price" type="number" placeholder="统一价格" class="w-20 px-2 py-1 text-xs border-l border-slate-200 focus:outline-none">
+                    <input id="batch-price" type="number" placeholder="统一价格" class="w-20 px-2 py-1 text-xs border-l border-slate-200 dark:border-slate-700 focus:outline-none dark:text-white">
                     <button onclick="applyBatchEdit()" class="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded transition-colors cursor-pointer">
                         应用修改
                     </button>
@@ -121,12 +135,12 @@
             </div>
         </div>
 
-        <div class="bg-white/95 backdrop-blur-md rounded-xl border border-slate-200/40 shadow-xs overflow-hidden">
+        <div class="glass-panel-admin rounded-xl shadow-xs overflow-hidden">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/70 border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <tr class="bg-white/30 dark:bg-slate-950/40 border-b border-white/20 dark:border-slate-800 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         <th class="p-4 w-12 text-center">
-                            <input type="checkbox" id="th-select-all" onchange="toggleSelectAll(this)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                            <input type="checkbox" id="th-select-all" onchange="toggleSelectAll(this)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 dark:border-slate-700 focus:ring-indigo-500 cursor-pointer">
                         </th>
                         <th class="p-4 w-1/4">域名</th>
                         <th class="p-4 w-1/4">备注</th>
@@ -135,7 +149,7 @@
                         <th class="p-4 text-right">操作</th>
                     </tr>
                 </thead>
-                <tbody id="domain-rows" class="divide-y divide-slate-100 text-sm"></tbody>
+                <tbody id="domain-rows" class="divide-y divide-white/10 dark:divide-slate-800/50 text-sm"></tbody>
             </table>
         </div>
 
@@ -146,47 +160,47 @@
         </div>
     </div>
 
-    <div id="settings-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full mx-4 border border-slate-200 p-6 transition-transform">
-            <div class="flex justify-between items-center pb-4 border-b border-slate-100">
-                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">🛠️ 全局系统环境配置</h3>
-                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+    <div id="settings-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center z-50 hidden">
+        <div class="bg-white/80 dark:bg-slate-900/85 backdrop-blur-xl rounded-2xl shadow-2xl max-w-xl w-full mx-4 border border-white/30 dark:border-slate-800 p-6 transition-transform">
+            <div class="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">🛠️ 全局系统环境配置</h3>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xl font-bold cursor-pointer">&times;</button>
             </div>
             
             <div class="py-4 space-y-4 max-h-[70vh] overflow-y-auto">
-                <p class="text-xs text-amber-600 font-medium">💡 提示：在此处配置4个不同状态下的背景图。留空时将使用系统的默认纯色/渐变。</p>
+                <p class="text-xs text-amber-600 dark:text-amber-400 font-medium">💡 提示：在此处配置4个不同状态下的背景图。留空时将使用系统的默认纯色/渐变。</p>
                 
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <h4 class="text-xs font-bold text-indigo-700 uppercase tracking-wider mb-3">📍 1. 管理员登录界面背景 (Login View)</h4>
+                <div class="bg-white/30 dark:bg-slate-950/30 p-4 rounded-xl border border-white/30 dark:border-slate-800">
+                    <h4 class="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider mb-3">📍 1. 管理员登录界面背景 (Login View)</h4>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">暗黑模式下登录背景 (URL 地址)</label>
-                            <input id="cfg-bg-login-dark" type="text" placeholder="例如 https://example.com/login-dark.jpg" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">暗黑模式下登录背景 (URL 地址)</label>
+                            <input id="cfg-bg-login-dark" type="text" placeholder="例如 https://example.com/login-dark.jpg" class="w-full px-3 py-1.5 text-xs bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">亮色模式下登录背景 (URL 地址)</label>
-                            <input id="cfg-bg-login-light" type="text" placeholder="例如 https://example.com/login-light.jpg" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">亮色模式下登录背景 (URL 地址)</label>
+                            <input id="cfg-bg-login-light" type="text" placeholder="例如 https://example.com/login-light.jpg" class="w-full px-3 py-1.5 text-xs bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <h4 class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">📍 2. 控制台管理界面背景 (Admin Dashboard)</h4>
+                <div class="bg-white/30 dark:bg-slate-950/30 p-4 rounded-xl border border-white/30 dark:border-slate-800">
+                    <h4 class="text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-3">📍 2. 控制台管理界面背景 (Admin Dashboard)</h4>
                     <div class="space-y-3">
                         <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">暗黑模式下后台背景 (URL 地址)</label>
-                            <input id="cfg-bg-admin-dark" type="text" placeholder="例如 https://example.com/admin-dark.jpg" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">暗黑模式下后台背景 (URL 地址)</label>
+                            <input id="cfg-bg-admin-dark" type="text" placeholder="例如 https://example.com/admin-dark.jpg" class="w-full px-3 py-1.5 text-xs bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
                         </div>
                         <div>
-                            <label class="block text-[11px] text-slate-500 mb-1">亮色模式下后台背景 (URL 地址)</label>
-                            <input id="cfg-bg-admin-light" type="text" placeholder="例如 https://example.com/admin-light.jpg" class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
+                            <label class="block text-[11px] text-slate-500 dark:text-slate-400 mb-1">亮色模式下后台背景 (URL 地址)</label>
+                            <input id="cfg-bg-admin-light" type="text" placeholder="例如 https://example.com/admin-light.jpg" class="w-full px-3 py-1.5 text-xs bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:border-indigo-500 font-mono">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="pt-4 border-t border-slate-100 flex justify-end gap-2">
-                <button onclick="closeSettingsModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg cursor-pointer">
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-2">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-lg cursor-pointer hover:bg-indigo-700">
                     完成编辑
                 </button>
             </div>
@@ -196,10 +210,9 @@
     <script>
         let domainList = [];
         let editIndex = null; 
-        let adminPassword = '';
-        let isUserLoggedIn = false; // 标记当前是否解锁成功
+        let adminPassword = sessionStorage.getItem('admin_pwd') || ''; // 从缓存加载密码
+        let isUserLoggedIn = sessionStorage.getItem('is_logged_in') === 'true'; // 从缓存加载状态
 
-        // 默认渐变色方案（当用户未指定 URL 时降级使用）
         const defaultBgs = {
             loginDark: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)',
             loginLight: 'linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%)',
@@ -207,51 +220,60 @@
             adminLight: 'linear-gradient(135deg, #f1f5f9 0%, #f8fafc 100%)'
         };
 
-        // --- 核心：安全登录验证引擎 ---
+        // 核心验证逻辑
         async function loginCheck() {
             const pwdInput = document.getElementById('pwd-input').value;
             const errDiv = document.getElementById('login-err');
             if (!pwdInput) return;
+            await verifyPassword(pwdInput, errDiv);
+        }
 
+        async function verifyPassword(pwd, errorElement) {
             try {
                 const res = await fetch('/api/config', {
-                    headers: { 'Authorization': 'Bearer ' + pwdInput }
+                    headers: { 'Authorization': 'Bearer ' + pwd }
                 });
 
                 if (res.ok) {
-                    adminPassword = pwdInput;
+                    adminPassword = pwd;
                     isUserLoggedIn = true;
-                    errDiv.classList.add('hidden');
+                    
+                    // 将登录凭证记录到会话级浏览器存储中（刷新不会丢失）
+                    sessionStorage.setItem('admin_pwd', pwd);
+                    sessionStorage.setItem('is_logged_in', 'true');
+                    
+                    if(errorElement) errorElement.classList.add('hidden');
                     
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('admin-main').classList.remove('hidden-admin');
                     
                     await loadDomains();
                 } else {
-                    errDiv.classList.remove('hidden');
+                    if(errorElement) errorElement.classList.remove('hidden');
                 }
             } catch (e) {
-                errDiv.innerText = "❌ 无法连接到 API 服务";
-                errDiv.classList.remove('hidden');
+                if(errorElement) {
+                    errorElement.innerText = "❌ 无法连接到 API 服务";
+                    errorElement.classList.remove('hidden');
+                }
             }
         }
 
         function logout() {
             adminPassword = '';
             isUserLoggedIn = false;
+            sessionStorage.clear(); // 清理缓存
             location.reload();
         }
 
-        // --- 系统设置弹窗控制 ---
         function openSettingsModal() {
             document.getElementById('settings-modal').classList.remove('hidden');
         }
         function closeSettingsModal() {
             document.getElementById('settings-modal').classList.add('hidden');
-            applyGlobalBackground(); // 关闭时重新计算刷新背景
+            applyGlobalBackground();
         }
 
-        // --- 主题模式与背景渲染引擎 ---
         function setThemeMode(mode) {
             const body = document.body;
             if (mode === 'dark') {
@@ -276,7 +298,6 @@
             const isDark = document.body.classList.contains('mode-dark');
             const bgEl = document.getElementById('global-bg');
             
-            // 获取输入框中的自定义值
             const loginDarkUrl = document.getElementById('cfg-bg-login-dark').value.trim();
             const loginLightUrl = document.getElementById('cfg-bg-login-light').value.trim();
             const adminDarkUrl = document.getElementById('cfg-bg-admin-dark').value.trim();
@@ -285,14 +306,12 @@
             let targetBg = '';
 
             if (!isUserLoggedIn) {
-                // 1. 处于登录状态界面
                 if (isDark) {
                     targetBg = loginDarkUrl ? `url('${loginDarkUrl}')` : defaultBgs.loginDark;
                 } else {
                     targetBg = loginLightUrl ? `url('${loginLightUrl}')` : defaultBgs.loginLight;
                 }
             } else {
-                // 2. 已经成功进入后台界面
                 if (isDark) {
                     targetBg = adminDarkUrl ? `url('${adminDarkUrl}')` : defaultBgs.adminDark;
                 } else {
@@ -303,13 +322,22 @@
             bgEl.style.backgroundImage = targetBg;
         }
 
-        // 页面首次初始化背景展示
-        setThemeMode('dark');
+        // 页面首次自动初始化流程
+        (async function init() {
+            setThemeMode('dark');
+            if (isUserLoggedIn && adminPassword) {
+                // 如果缓存中存在有效会话，免密自动跳过登录界面
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-main').classList.remove('hidden-admin');
+                await loadDomains();
+            }
+        })();
 
-        // --- 云端拉取 ---
         async function loadDomains() {
             try {
-                const res = await fetch('/api/config');
+                const res = await fetch('/api/config', {
+                    headers: { 'Authorization': 'Bearer ' + adminPassword }
+                });
                 const resData = await res.json();
                 
                 let domains = [];
@@ -318,16 +346,15 @@
                 } else if (resData && typeof resData === 'object') {
                     domains = resData.domains || [];
                     
-                    // 解析映射 4 个背景字段（提供向前兼容逻辑）
                     document.getElementById('cfg-bg-login-dark').value = resData.bgLoginDark || '';
                     document.getElementById('cfg-bg-login-light').value = resData.bgLoginLight || '';
-                    document.getElementById('cfg-bg-admin-dark').value = resData.bgAdminDark || resData.backgroundImageDark || resData.backgroundImage || '';
+                    document.getElementById('cfg-bg-admin-dark').value = resData.bgAdminDark || resData.backgroundImageDark || '';
                     document.getElementById('cfg-bg-admin-light').value = resData.bgAdminLight || resData.backgroundImageLight || '';
                 }
                 
                 domainList = domains.map(item => ({ ...item, _selected: false }));
                 renderTable();
-                applyGlobalBackground(); // 云端同步配置后立刻刷新动态背景
+                applyGlobalBackground();
             } catch (e) {
                 showToast('同步云端基础配置失败', 'error');
             }
@@ -346,19 +373,19 @@
                 
                 if (editIndex === index) {
                     return `
-                        <tr class="bg-indigo-50/30">
+                        <tr class="bg-indigo-500/10">
                             <td class="p-3 text-center"></td>
-                            <td class="p-3"><input id="edit-domain" type="text" value="${item.domain}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
-                            <td class="p-3"><input id="edit-memo" type="text" value="${item.memo || ''}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
-                            <td class="p-3"><input id="edit-price" type="number" value="${item.price || ''}" class="w-full px-2 py-1 text-sm bg-white border border-slate-200 rounded"></td>
+                            <td class="p-3"><input id="edit-domain" type="text" value="${item.domain}" class="w-full px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded dark:text-white"></td>
+                            <td class="p-3"><input id="edit-memo" type="text" value="${item.memo || ''}" class="w-full px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded dark:text-white"></td>
+                            <td class="p-3"><input id="edit-price" type="number" value="${item.price || ''}" class="w-full px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded dark:text-white"></td>
                             <td class="p-3">
-                                <select id="edit-status" class="px-2 py-1 text-sm bg-white border border-slate-200 rounded">
-                                    <option value="up" ${item.status === 'up' ? 'selected' : ''}>正常</option>
-                                    <option value="down" ${item.status === 'down' ? 'selected' : ''}>异常</option>
+                                <select id="edit-status" class="px-2 py-1 text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded dark:text-white">
+                                    <option value="up" ${item.status === 'up' ? 'selected' : ''} class="text-slate-900">正常</option>
+                                    <option value="down" ${item.status === 'down' ? 'selected' : ''} class="text-slate-900">异常</option>
                                 </select>
                             </td>
                             <td class="p-3 text-right space-x-2">
-                                <button onclick="confirmEdit(${index})" class="text-xs text-emerald-600 font-bold hover:underline cursor-pointer">确定</button>
+                                <button onclick="confirmEdit(${index})" class="text-xs text-emerald-500 font-bold hover:underline cursor-pointer">确定</button>
                                 <button onclick="cancelEdit()" class="text-xs text-slate-400 hover:underline cursor-pointer">取消</button>
                             </td>
                         </tr>
@@ -366,21 +393,21 @@
                 }
 
                 return `
-                    <tr class="hover:bg-slate-50/50 transition-colors ${item._selected ? 'bg-slate-50/60' : ''}">
+                    <tr class="hover:bg-white/20 dark:hover:bg-white/5 transition-colors ${item._selected ? 'bg-indigo-500/10' : ''}">
                         <td class="p-4 text-center">
-                            <input type="checkbox" ${isChecked} onchange="toggleRowSelect(${index}, this.checked)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 focus:ring-indigo-500 cursor-pointer">
+                            <input type="checkbox" ${isChecked} onchange="toggleRowSelect(${index}, this.checked)" class="w-4 h-4 rounded text-indigo-600 border-slate-300 dark:border-slate-700 focus:ring-indigo-500 cursor-pointer">
                         </td>
-                        <td class="p-4 font-mono font-medium text-slate-700">${item.domain}</td>
-                        <td class="p-4 text-slate-500">${item.memo || '-'}</td>
-                        <td class="p-4 text-amber-600 font-semibold">${item.price ? '￥' + item.price : '-'}</td>
+                        <td class="p-4 font-mono font-medium text-slate-800 dark:text-slate-200">${item.domain}</td>
+                        <td class="p-4 text-slate-500 dark:text-slate-400">${item.memo || '-'}</td>
+                        <td class="p-4 text-amber-600 dark:text-amber-400 font-semibold">${item.price ? '￥' + item.price : '-'}</td>
                         <td class="p-4">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.status === 'up' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item.status === 'up' ? 'bg-green-500/15 text-green-500 border border-green-500/30' : 'bg-rose-500/15 text-rose-500 border border-rose-500/30'}">
                                 ${item.status === 'up' ? '正常' : '异常'}
                             </span>
                         </td>
                         <td class="p-4 text-right space-x-3">
-                            <button onclick="startEdit(${index})" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer">编辑</button>
-                            <button onclick="deleteRow(${index})" class="text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer">删除</button>
+                            <button onclick="startEdit(${index})" class="text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 font-medium cursor-pointer">编辑</button>
+                            <button onclick="deleteRow(${index})" class="text-xs text-red-500 hover:text-red-400 font-medium cursor-pointer">删除</button>
                         </td>
                     </tr>
                 `;
@@ -391,7 +418,6 @@
             updateBatchPanel();
         }
 
-        // --- 多选/全选逻辑控制 ---
         function toggleRowSelect(index, isChecked) {
             domainList[index]._selected = isChecked;
             updateBatchPanel();
@@ -465,6 +491,8 @@
             document.getElementById('new-price').value = '';
         }
 
+        document.getElementById('new-domain').onkeydown = e => { if(e.key==='Enter') addDomain(); };
+
         function startEdit(index) { editIndex = index; renderTable(); }
         function cancelEdit() { editIndex = null; renderTable(); }
 
@@ -488,7 +516,6 @@
             }
         }
 
-        // --- 构造最终全局云端 Payload (合并包含 4 个背景配置) ---
         function buildPayload() {
             const cleanedDomains = domainList.map(({ _selected, ...rest }) => rest);
             return {
@@ -496,7 +523,6 @@
                 bgLoginLight: document.getElementById('cfg-bg-login-light').value.trim(),
                 bgAdminDark: document.getElementById('cfg-bg-admin-dark').value.trim(),
                 bgAdminLight: document.getElementById('cfg-bg-admin-light').value.trim(),
-                // 保留历史字段以便前台公共展示端无缝兼容
                 backgroundImageDark: document.getElementById('cfg-bg-admin-dark').value.trim(),
                 backgroundImageLight: document.getElementById('cfg-bg-admin-light').value.trim(),
                 domains: cleanedDomains
@@ -530,7 +556,6 @@
             }
         }
 
-        // --- 备份与恢复处理 ---
         function exportBackup() {
             try {
                 const payload = buildPayload();
