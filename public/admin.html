@@ -37,8 +37,16 @@
                 <h2 class="text-3xl font-extrabold text-slate-900">⚙️ 资产控制台</h2>
                 <p class="text-slate-500 text-sm mt-1">手动维护资产配置及双色背景图</p>
             </div>
-            <div>
-                <button onclick="logout()" class="px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 bg-white rounded-lg transition-colors cursor-pointer">
+            <div class="flex items-center gap-2">
+                <button onclick="exportBackup()" class="px-3 py-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50 border border-indigo-200 bg-white rounded-lg transition-colors cursor-pointer">
+                    📦 导出备份
+                </button>
+                <button onclick="triggerImport()" class="px-3 py-2 text-xs font-bold text-amber-600 hover:bg-amber-50 border border-amber-200 bg-white rounded-lg transition-colors cursor-pointer">
+                    📥 导入恢复
+                </button>
+                <input type="file" id="backup-file-input" accept=".json" class="hidden" onchange="importBackup(event)">
+                
+                <button onclick="logout()" class="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 border border-rose-200 bg-white rounded-lg transition-colors cursor-pointer ml-4">
                     安全退出
                 </button>
             </div>
@@ -109,24 +117,17 @@
             if (!pwdInput) return;
 
             try {
-                // 模拟向后台发出带有此密码的测试拉取请求，验证密码正确性
                 const res = await fetch('/api/config', {
                     headers: { 'Authorization': 'Bearer ' + pwdInput }
                 });
 
-                // 由于拉取配置不管输不输密码都能拉到数据（onRequestGet 没鉴权），
-                // 但我们要验证密码是否符合后端 `ADMIN_PASSWORD`，所以发送一个 POST 测试（或这里我们通过读取来检查，但为了保险，直接调用保存/加载流程）
-                // 我们直接将这个密码作为凭证尝试去读取
                 if (res.ok) {
-                    // 保存凭证
                     adminPassword = pwdInput;
                     errDiv.classList.add('hidden');
                     
-                    // 隐藏登录遮罩，显示管理后台主体
                     document.getElementById('login-overlay').style.display = 'none';
                     document.getElementById('admin-main').classList.remove('hidden-admin');
                     
-                    // 成功登录后才开始拉取云端数据
                     await loadDomains();
                 } else {
                     errDiv.classList.remove('hidden');
@@ -137,7 +138,6 @@
             }
         }
 
-        // 登出清理
         function logout() {
             adminPassword = '';
             location.reload();
@@ -251,17 +251,20 @@
             }
         }
 
-        async function saveAll() {
-            if (!adminPassword) return showToast('会话已过期，请刷新页面重新登录', 'error');
-
+        // --- 构造当前的配置Payload ---
+        function buildPayload() {
             const bgDark = document.getElementById('bg-url-dark').value.trim();
             const bgLight = document.getElementById('bg-url-light').value.trim();
-            
-            const payload = {
+            return {
                 backgroundImageDark: bgDark,
                 backgroundImageLight: bgLight,
                 domains: domainList
             };
+        }
+
+        async function saveAll() {
+            if (!adminPassword) return showToast('会话已过期，请刷新页面重新登录', 'error');
+            const payload = buildPayload();
 
             try {
                 const res = await fetch('/api/config', {
@@ -283,6 +286,69 @@
             } catch (e) {
                 showToast('网络异常，无法连接云端', 'error');
             }
+        }
+
+        // --- 新增：备份导出下载功能 ---
+        function exportBackup() {
+            try {
+                const payload = buildPayload();
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+                const downloadAnchor = document.createElement('a');
+                
+                // 自动生成带当前日期的备份文件名
+                const dateStr = new Date().toISOString().slice(0, 10);
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `cf_domain_backup_${dateStr}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+                showToast('📦 备份文件已成功生成并下载', 'success');
+            } catch (e) {
+                showToast('导出备份失败', 'error');
+            }
+        }
+
+        // --- 新增：触发文件上传选择 ---
+        function triggerImport() {
+            document.getElementById('backup-file-input').click();
+        }
+
+        // --- 新增：备份导入恢复处理功能 ---
+        function importBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // 校验 JSON 基础结构合法性
+                    if (!importedData || (typeof importedData !== 'object')) {
+                        throw new Error('无效的 JSON 格式');
+                    }
+                    
+                    // 兼容旧版的单 domains 数组备份格式或标准对象格式
+                    if (Array.isArray(importedData)) {
+                        domainList = importedData;
+                        document.getElementById('bg-url-dark').value = '';
+                        document.getElementById('bg-url-light').value = '';
+                    } else {
+                        domainList = importedData.domains || [];
+                        document.getElementById('bg-url-dark').value = importedData.backgroundImageDark || importedData.backgroundImage || '';
+                        document.getElementById('bg-url-light').value = importedData.backgroundImageLight || '';
+                    }
+
+                    renderTable();
+                    showToast('📥 备份解析成功！请确认后点击下方“保存”推送到云端。', 'success');
+                } catch (err) {
+                    showToast('解析备份文件失败，请确保是合法的 JSON 配置', 'error');
+                } finally {
+                    // 重置 input 以允许重复上传同一个文件
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
         }
 
         function showToast(msg, type = 'success') {
